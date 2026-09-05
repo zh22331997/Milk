@@ -28,10 +28,6 @@
       margin-top: 0;
     }
 
-    .status {
-      margin-bottom: 18px;
-    }
-
     .ok {
       color: #23763c;
       font-weight: 700;
@@ -91,7 +87,7 @@
       font-size: 14px;
     }
 
-    iframe {
+    .hidden-frame {
       width: 0;
       height: 0;
       border: 0;
@@ -107,8 +103,8 @@
   <div class="card">
     <h1>江翠校乳品訂購</h1>
 
-    <div id="status" class="status">
-      正在連接 GAS……
+    <div class="ok">
+      GAS 查詢通道已準備
     </div>
 
     <div class="field">
@@ -140,7 +136,6 @@
     <button
       id="queryBtn"
       type="button"
-      disabled
     >
       查詢訂購內容
     </button>
@@ -154,26 +149,51 @@
 
 
   <iframe
-    id="gasBridge"
-    src="https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec?bridge=1"
+    class="hidden-frame"
+    name="gasPostFrame"
+    id="gasPostFrame"
   ></iframe>
 
 
+  <form
+    id="gasPostForm"
+    method="POST"
+    target="gasPostFrame"
+    action="https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec"
+    style="display:none"
+  >
+    <input
+      type="hidden"
+      name="action"
+      id="postAction"
+    >
+
+    <input
+      type="hidden"
+      name="requestId"
+      id="postRequestId"
+    >
+
+    <input
+      type="hidden"
+      name="payload"
+      id="postPayload"
+    >
+  </form>
+
+
 <script>
-  const bridge =
-    document.getElementById('gasBridge');
-
-  const statusBox =
-    document.getElementById('status');
-
   const queryBtn =
     document.getElementById('queryBtn');
 
   const queryResults =
     document.getElementById('queryResults');
 
-  let bridgeReady =
-    false;
+  const gasPostForm =
+    document.getElementById('gasPostForm');
+
+  let currentQueryRequestId =
+    '';
 
 
   function createRequestId() {
@@ -185,29 +205,34 @@
   }
 
 
-  function sendToBridge(
+  function postToGas(
     action,
     payload
   ) {
     const requestId =
       createRequestId();
 
-    bridge.contentWindow.postMessage(
-      {
-        source: 'milk-github',
-        action,
-        requestId,
-        payload: payload || {}
-      },
-      '*'
-    );
+    document.getElementById(
+      'postAction'
+    ).value =
+      action;
+
+    document.getElementById(
+      'postRequestId'
+    ).value =
+      requestId;
+
+    document.getElementById(
+      'postPayload'
+    ).value =
+      JSON.stringify(
+        payload || {}
+      );
+
+    gasPostForm.submit();
 
     return requestId;
   }
-
-
-  let currentQueryRequestId =
-    '';
 
 
   window.addEventListener(
@@ -217,35 +242,12 @@
       const message =
         event.data || {};
 
-
       if (
         message.source !==
         'milk-gas-bridge'
       ) {
         return;
       }
-
-
-      if (
-        message.type ===
-        'bridge-ready'
-      ) {
-
-        bridgeReady =
-          true;
-
-        statusBox.textContent =
-          'GAS Bridge 已連線';
-
-        statusBox.className =
-          'status ok';
-
-        queryBtn.disabled =
-          false;
-
-        return;
-      }
-
 
       if (
         message.type !==
@@ -254,43 +256,48 @@
         return;
       }
 
+      if (
+        message.action !==
+        'query'
+      ) {
+        return;
+      }
 
       if (
-        message.action ===
-        'query' &&
-        message.requestId ===
+        message.requestId !==
         currentQueryRequestId
       ) {
-
-        queryBtn.disabled =
-          false;
-
-        queryBtn.textContent =
-          '查詢訂購內容';
-
-
-        if (
-          !message.success
-        ) {
-
-          queryResults.innerHTML =
-            `
-              <div class="result-card error">
-                ${escapeHtml(
-                  message.error ||
-                  '查詢失敗。'
-                )}
-              </div>
-            `;
-
-          return;
-        }
-
-
-        renderQueryResults(
-          message.data || []
-        );
+        return;
       }
+
+
+      queryBtn.disabled =
+        false;
+
+      queryBtn.textContent =
+        '查詢訂購內容';
+
+
+      if (
+        !message.success
+      ) {
+        queryResults.innerHTML =
+          `
+            <div class="result-card error">
+              ${escapeHtml(
+                message.error ||
+                '查詢失敗。'
+              )}
+            </div>
+          `;
+
+        return;
+      }
+
+
+      renderQueryResults(
+        message.data || []
+      );
     }
   );
 
@@ -299,22 +306,19 @@
     'click',
     () => {
 
-      if (
-        !bridgeReady
-      ) {
-        return;
-      }
-
-
       const studentName =
         document
-          .getElementById('studentName')
+          .getElementById(
+            'studentName'
+          )
           .value
           .trim();
 
       const phoneLast3 =
         document
-          .getElementById('phoneLast3')
+          .getElementById(
+            'phoneLast3'
+          )
           .value
           .trim();
 
@@ -325,7 +329,6 @@
           phoneLast3
         )
       ) {
-
         queryResults.innerHTML =
           `
             <div class="result-card error">
@@ -348,7 +351,7 @@
 
 
       currentQueryRequestId =
-        sendToBridge(
+        postToGas(
           'query',
           {
             studentName,
@@ -366,7 +369,6 @@
     if (
       !orders.length
     ) {
-
       queryResults.innerHTML =
         `
           <div class="result-card">
@@ -470,7 +472,6 @@
   function escapeHtml(
     value
   ) {
-
     return String(
       value == null
         ? ''
