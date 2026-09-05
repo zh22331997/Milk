@@ -64,6 +64,10 @@
     button:hover { background:#8FB9E2; }
     button:disabled { opacity:.55; cursor:default; }
     .secondary { background:#BBD1EA; }
+    .tertiary {
+      margin-top: 10px;
+      background:#DAE3E5;
+    }
     .result {
       margin-top:14px;
       padding:14px;
@@ -72,6 +76,16 @@
       line-height:1.7;
     }
     .small { font-size:14px; color:#6b7b87; }
+    .debug {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #f6f8fa;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #536574;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
     .hidden-frame { width:0; height:0; border:0; position:absolute; opacity:0; pointer-events:none; }
     @media (max-width: 640px) {
       body { padding: 12px; }
@@ -86,12 +100,14 @@
       <h1>江翠校乳品訂購</h1>
       <p class="sub">GitHub 測試送單版</p>
       <div id="systemStatus" class="notice">正在讀取 GAS 系統設定……</div>
+      <button id="retryBootstrapBtn" class="tertiary" type="button" hidden>重新讀取系統設定</button>
+      <div id="debugBox" class="debug">尚未收到 GAS 回傳。</div>
     </div>
 
     <div class="card">
       <h2>測試送單</h2>
       <div class="notice warn">
-        此頁目前只允許「測試學生」送單，而且第一階段只測「整月訂購」。正式學生姓名會被 GAS 拒絕。
+        此頁目前只允許「測試學生」送單。若正式系統尚未開放，後端仍會依原規則拒絕送單；這不是按鈕故障。
       </div>
 
       <div class="grid" style="margin-top:14px">
@@ -105,7 +121,7 @@
         </div>
         <div class="field">
           <label for="className">班級</label>
-          <select id="className"><option value="">讀取中……</option></select>
+          <select id="className"><option value="">等待系統資料……</option></select>
         </div>
         <div class="field">
           <label for="phoneLast3">手機末三碼</label>
@@ -115,10 +131,10 @@
 
       <div class="field">
         <label for="productCode">訂購品項</label>
-        <select id="productCode"><option value="">讀取中……</option></select>
+        <select id="productCode"><option value="">等待系統資料……</option></select>
       </div>
 
-      <div id="monthInfo" class="notice">訂購月份讀取中……</div>
+      <div id="monthInfo" class="notice">訂購月份等待系統資料……</div>
 
       <div class="checkrow">
         <input id="needBag" type="checkbox">
@@ -130,7 +146,7 @@
         <textarea id="note" maxlength="100"></textarea>
       </div>
 
-      <button id="submitBtn" type="button" disabled>確認並送出測試訂單</button>
+      <button id="submitBtn" type="button" disabled>等待系統設定</button>
       <div id="submitResult"></div>
     </div>
 
@@ -163,34 +179,83 @@
 <script>
   const form = document.getElementById('gasPostForm');
   const systemStatus = document.getElementById('systemStatus');
+  const retryBootstrapBtn = document.getElementById('retryBootstrapBtn');
+  const debugBox = document.getElementById('debugBox');
   const submitBtn = document.getElementById('submitBtn');
   const submitResult = document.getElementById('submitResult');
   const queryBtn = document.getElementById('queryBtn');
   const queryResult = document.getElementById('queryResult');
+
   let bootstrap = null;
+  let bootstrapRequestId = '';
+  let bootstrapTimer = null;
   const pending = new Map();
 
-  function requestId() {
+  function createRequestId() {
     return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 
+  function setDebug(text) {
+    debugBox.textContent = text;
+  }
+
   function postToGas(action, payload) {
-    const id = requestId();
+    const id = createRequestId();
     document.getElementById('postAction').value = action;
     document.getElementById('postRequestId').value = id;
     document.getElementById('postPayload').value = JSON.stringify(payload || {});
     pending.set(id, action);
     form.submit();
+    setDebug(`已送出 ${action}\nrequestId=${id}\n等待 GAS 回傳……`);
     return id;
   }
 
+  function loadBootstrap() {
+    if (bootstrapTimer) clearTimeout(bootstrapTimer);
+    bootstrap = null;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '等待系統設定';
+    retryBootstrapBtn.hidden = true;
+    systemStatus.className = 'notice';
+    systemStatus.textContent = '正在讀取 GAS 系統設定……';
+
+    bootstrapRequestId = postToGas('bootstrap', {});
+
+    bootstrapTimer = setTimeout(() => {
+      if (bootstrap) return;
+      if (!pending.has(bootstrapRequestId)) return;
+      pending.delete(bootstrapRequestId);
+      systemStatus.className = 'notice error';
+      systemStatus.textContent = '讀取超過 15 秒，尚未收到 GAS 回傳。';
+      retryBootstrapBtn.hidden = false;
+      setDebug(`bootstrap 逾時\nrequestId=${bootstrapRequestId}\n請按「重新讀取系統設定」。`);
+    }, 15000);
+  }
+
+  retryBootstrapBtn.addEventListener('click', loadBootstrap);
+
   window.addEventListener('message', event => {
     const msg = event.data || {};
-    if (msg.source !== 'milk-gas-bridge' || msg.type !== 'response') return;
-    if (!pending.has(msg.requestId)) return;
+
+    if (msg.source !== 'milk-gas-bridge' || msg.type !== 'response') {
+      return;
+    }
+
+    setDebug(
+      `收到 GAS 回傳\naction=${String(msg.action || '')}\nrequestId=${String(msg.requestId || '')}\nsuccess=${String(Boolean(msg.success))}` +
+      (msg.error ? `\nerror=${msg.error}` : '')
+    );
+
+    if (!pending.has(msg.requestId)) {
+      return;
+    }
+
     const expected = pending.get(msg.requestId);
     pending.delete(msg.requestId);
-    if (msg.action !== expected) return;
+
+    if (msg.action !== expected) {
+      return;
+    }
 
     if (msg.action === 'bootstrap') handleBootstrap(msg);
     if (msg.action === 'query') handleQuery(msg);
@@ -198,16 +263,24 @@
   });
 
   function handleBootstrap(msg) {
+    if (bootstrapTimer) {
+      clearTimeout(bootstrapTimer);
+      bootstrapTimer = null;
+    }
+
     if (!msg.success) {
       systemStatus.className = 'notice error';
       systemStatus.textContent = msg.error || '系統設定讀取失敗。';
+      retryBootstrapBtn.hidden = false;
       return;
     }
 
-    bootstrap = msg.data;
+    bootstrap = msg.data || {};
     const status = bootstrap.status || {};
+    const p = bootstrap.period || {};
+
     systemStatus.className = status.canOrder ? 'notice ok' : 'notice warn';
-    systemStatus.textContent = `${status.label || '系統資料已讀取'}｜${bootstrap.period?.targetMonthText || ''}`;
+    systemStatus.textContent = `${status.label || '系統資料已讀取'}｜${p.targetMonthText || ''}`;
 
     const classSelect = document.getElementById('className');
     classSelect.innerHTML = '<option value="">請選擇班級</option>' +
@@ -215,13 +288,25 @@
 
     const productSelect = document.getElementById('productCode');
     productSelect.innerHTML = '<option value="">請選擇品項</option>' +
-      (bootstrap.products || []).map(p => `<option value="${escAttr(p.code)}">${esc(p.name)}</option>`).join('');
+      (bootstrap.products || []).map(item =>
+        `<option value="${escAttr(item.code)}">${esc(item.name)}</option>`
+      ).join('');
 
-    const p = bootstrap.period || {};
     document.getElementById('monthInfo').textContent =
       `${p.targetMonthText || ''}｜${p.displayText || ''}｜整月 ${p.bottleCount || 0} 瓶｜每瓶 NT$${p.unitPrice || 0}｜合計 NT$${p.amount || 0}`;
 
-    submitBtn.disabled = !status.canOrder;
+    if (status.canOrder) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '確認並送出測試訂單';
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.textContent = '目前尚未開放，無法測試送單';
+      submitResult.innerHTML = `
+        <div class="notice warn">
+          系統資料已成功讀到，但目前正式訂購狀態不是「開放中」。<br>
+          因後端仍沿用正式送單規則，所以現在不能真正寫入測試訂單。
+        </div>`;
+    }
   }
 
   submitBtn.addEventListener('click', () => {
@@ -248,7 +333,7 @@
       orderType: '整月訂購',
       selectedDates: [],
       note: document.getElementById('note').value,
-      requestToken: requestId()
+      requestToken: createRequestId()
     };
 
     if (!confirm(`確定送出測試訂單？\n\n測試學生／${className}\n${product ? product.name : productCode}\n${bootstrap.period?.displayText || ''}`)) return;
@@ -260,8 +345,9 @@
   });
 
   function handleSubmit(msg) {
-    submitBtn.disabled = !(bootstrap && bootstrap.status && bootstrap.status.canOrder);
-    submitBtn.textContent = '確認並送出測試訂單';
+    const canOrder = Boolean(bootstrap && bootstrap.status && bootstrap.status.canOrder);
+    submitBtn.disabled = !canOrder;
+    submitBtn.textContent = canOrder ? '確認並送出測試訂單' : '目前尚未開放，無法測試送單';
 
     if (!msg.success) {
       showSubmitError(msg.error || '送單失敗。');
@@ -289,28 +375,33 @@
   queryBtn.addEventListener('click', () => {
     const studentName = document.getElementById('queryName').value.trim();
     const phoneLast3 = document.getElementById('queryLast3').value.trim();
+
     if (!studentName || !/^\d{3}$/.test(phoneLast3)) {
       queryResult.innerHTML = '<div class="notice error">請輸入學生中文全名與 3 位手機末三碼。</div>';
       return;
     }
+
     queryBtn.disabled = true;
     queryBtn.textContent = '查詢中……';
     queryResult.innerHTML = '';
-    postToGas('query', {studentName, phoneLast3});
+    postToGas('query', { studentName, phoneLast3 });
   });
 
   function handleQuery(msg) {
     queryBtn.disabled = false;
     queryBtn.textContent = '查詢訂購內容';
+
     if (!msg.success) {
       queryResult.innerHTML = `<div class="notice error">${esc(msg.error || '查詢失敗。')}</div>`;
       return;
     }
+
     const orders = msg.data || [];
     if (!orders.length) {
       queryResult.innerHTML = '<div class="result">查無符合的訂購資料。</div>';
       return;
     }
+
     queryResult.innerHTML = orders.map(o => `
       <div class="result">
         <strong>${esc(o.targetMonth || '')}｜${esc(o.productName || '')}</strong><br>
@@ -325,12 +416,18 @@
 
   function esc(v) {
     return String(v == null ? '' : v)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#039;');
   }
-  function escAttr(v) { return esc(v); }
 
-  postToGas('bootstrap', {});
+  function escAttr(v) {
+    return esc(v);
+  }
+
+  loadBootstrap();
 </script>
 </body>
 </html>
