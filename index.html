@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>江翠校乳品訂購測試</title>
+  <title>江翠校乳品訂購</title>
 
   <style>
     body {
@@ -24,6 +24,14 @@
       box-shadow: 0 8px 24px rgba(20, 71, 69, 0.08);
     }
 
+    h1 {
+      margin-top: 0;
+    }
+
+    .status {
+      margin-bottom: 18px;
+    }
+
     .ok {
       color: #23763c;
       font-weight: 700;
@@ -34,13 +42,53 @@
       font-weight: 700;
     }
 
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      padding: 14px;
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #cbd9df;
       border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 6px;
+      padding: 12px;
+      border: 0;
+      border-radius: 10px;
+      background: #9ec5e8;
+      color: #17324a;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: default;
+    }
+
+    .result-card {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 12px;
       background: #eef5f5;
-      overflow: auto;
+    }
+
+    .muted {
+      color: #6c7d86;
+      font-size: 14px;
     }
 
     iframe {
@@ -59,104 +107,397 @@
   <div class="card">
     <h1>江翠校乳品訂購</h1>
 
-    <p id="status">
+    <div id="status" class="status">
       正在連接 GAS……
-    </p>
+    </div>
 
-    <pre id="result">尚未取得資料</pre>
+    <div class="field">
+      <label for="studentName">
+        學生中文全名
+      </label>
+
+      <input
+        id="studentName"
+        type="text"
+        autocomplete="off"
+      >
+    </div>
+
+    <div class="field">
+      <label for="phoneLast3">
+        手機末三碼
+      </label>
+
+      <input
+        id="phoneLast3"
+        type="text"
+        inputmode="numeric"
+        maxlength="3"
+        autocomplete="off"
+      >
+    </div>
+
+    <button
+      id="queryBtn"
+      type="button"
+      disabled
+    >
+      查詢訂購內容
+    </button>
+
+    <div id="queryResults"></div>
+
+    <p class="muted">
+      此頁目前只開放查詢測試，尚未開放送出訂單。
+    </p>
   </div>
+
 
   <iframe
     id="gasBridge"
-    src="https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec?bridge=1""
+    src="https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec?bridge=1"
   ></iframe>
 
 
-  <script>
-    const bridge =
-      document.getElementById('gasBridge');
+<script>
+  const bridge =
+    document.getElementById('gasBridge');
 
-    const statusBox =
-      document.getElementById('status');
+  const statusBox =
+    document.getElementById('status');
 
-    const resultBox =
-      document.getElementById('result');
+  const queryBtn =
+    document.getElementById('queryBtn');
 
-    const requestId =
-      `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const queryResults =
+    document.getElementById('queryResults');
 
-
-    window.addEventListener(
-      'message',
-      event => {
-
-        const message =
-          event.data || {};
-
-        if (
-          message.source !==
-          'milk-gas-bridge'
-        ) {
-          return;
-        }
+  let bridgeReady =
+    false;
 
 
-        if (
-          message.type ===
-          'bridge-ready'
-        ) {
-          statusBox.textContent =
-            'Bridge 已連線，正在讀取系統設定……';
-
-          bridge.contentWindow.postMessage(
-            {
-              source: 'milk-github',
-              action: 'bootstrap',
-              requestId: requestId
-            },
-            '*'
-          );
-
-          return;
-        }
-
-
-        if (
-          message.type === 'response' &&
-          message.requestId === requestId
-        ) {
-
-          if (message.success) {
-
-            statusBox.textContent =
-              'GAS 資料讀取成功';
-
-            statusBox.className =
-              'ok';
-
-            resultBox.textContent =
-              JSON.stringify(
-                message.data,
-                null,
-                2
-              );
-
-          } else {
-
-            statusBox.textContent =
-              'GAS 資料讀取失敗';
-
-            statusBox.className =
-              'error';
-
-            resultBox.textContent =
-              message.error ||
-              '未知錯誤';
-          }
-        }
-      }
+  function createRequestId() {
+    return (
+      Date.now() +
+      '-' +
+      Math.random().toString(36).slice(2)
     );
-  </script>
+  }
+
+
+  function sendToBridge(
+    action,
+    payload
+  ) {
+    const requestId =
+      createRequestId();
+
+    bridge.contentWindow.postMessage(
+      {
+        source: 'milk-github',
+        action,
+        requestId,
+        payload: payload || {}
+      },
+      '*'
+    );
+
+    return requestId;
+  }
+
+
+  let currentQueryRequestId =
+    '';
+
+
+  window.addEventListener(
+    'message',
+    event => {
+
+      const message =
+        event.data || {};
+
+
+      if (
+        message.source !==
+        'milk-gas-bridge'
+      ) {
+        return;
+      }
+
+
+      if (
+        message.type ===
+        'bridge-ready'
+      ) {
+
+        bridgeReady =
+          true;
+
+        statusBox.textContent =
+          'GAS Bridge 已連線';
+
+        statusBox.className =
+          'status ok';
+
+        queryBtn.disabled =
+          false;
+
+        return;
+      }
+
+
+      if (
+        message.type !==
+        'response'
+      ) {
+        return;
+      }
+
+
+      if (
+        message.action ===
+        'query' &&
+        message.requestId ===
+        currentQueryRequestId
+      ) {
+
+        queryBtn.disabled =
+          false;
+
+        queryBtn.textContent =
+          '查詢訂購內容';
+
+
+        if (
+          !message.success
+        ) {
+
+          queryResults.innerHTML =
+            `
+              <div class="result-card error">
+                ${escapeHtml(
+                  message.error ||
+                  '查詢失敗。'
+                )}
+              </div>
+            `;
+
+          return;
+        }
+
+
+        renderQueryResults(
+          message.data || []
+        );
+      }
+    }
+  );
+
+
+  queryBtn.addEventListener(
+    'click',
+    () => {
+
+      if (
+        !bridgeReady
+      ) {
+        return;
+      }
+
+
+      const studentName =
+        document
+          .getElementById('studentName')
+          .value
+          .trim();
+
+      const phoneLast3 =
+        document
+          .getElementById('phoneLast3')
+          .value
+          .trim();
+
+
+      if (
+        !studentName ||
+        !/^\d{3}$/.test(
+          phoneLast3
+        )
+      ) {
+
+        queryResults.innerHTML =
+          `
+            <div class="result-card error">
+              請輸入學生中文全名與 3 位手機末三碼。
+            </div>
+          `;
+
+        return;
+      }
+
+
+      queryBtn.disabled =
+        true;
+
+      queryBtn.textContent =
+        '查詢中……';
+
+      queryResults.innerHTML =
+        '';
+
+
+      currentQueryRequestId =
+        sendToBridge(
+          'query',
+          {
+            studentName,
+            phoneLast3
+          }
+        );
+    }
+  );
+
+
+  function renderQueryResults(
+    orders
+  ) {
+
+    if (
+      !orders.length
+    ) {
+
+      queryResults.innerHTML =
+        `
+          <div class="result-card">
+            查無符合的訂購資料。
+          </div>
+        `;
+
+      return;
+    }
+
+
+    queryResults.innerHTML =
+      orders
+        .map(
+          order => `
+            <div class="result-card">
+
+              <div>
+                <strong>
+                  ${escapeHtml(
+                    order.targetMonth || ''
+                  )}
+                </strong>
+              </div>
+
+              <div>
+                ${escapeHtml(
+                  order.productName || ''
+                )}
+              </div>
+
+              <hr>
+
+              <div>
+                學生：
+                ${escapeHtml(
+                  order.studentName || ''
+                )}
+              </div>
+
+              <div>
+                班級：
+                ${escapeHtml(
+                  order.className || ''
+                )}
+              </div>
+
+              <div>
+                訂購方式：
+                ${escapeHtml(
+                  order.orderType || ''
+                )}
+              </div>
+
+              <div>
+                配送：
+                ${escapeHtml(
+                  order.displayText || ''
+                )}
+              </div>
+
+              <div>
+                瓶數：
+                ${escapeHtml(
+                  String(
+                    order.deliveryCount || ''
+                  )
+                )}
+              </div>
+
+              <div>
+                品項：
+                ${escapeHtml(
+                  order.productName || ''
+                )}
+              </div>
+
+              <div>
+                應繳金額：
+                NT$ ${escapeHtml(
+                  String(
+                    order.amount || 0
+                  )
+                )}
+              </div>
+
+              <div>
+                訂單編號：
+                ${escapeHtml(
+                  order.orderNumber || ''
+                )}
+              </div>
+
+            </div>
+          `
+        )
+        .join('');
+  }
+
+
+  function escapeHtml(
+    value
+  ) {
+
+    return String(
+      value == null
+        ? ''
+        : value
+    )
+      .replace(
+        /&/g,
+        '&amp;'
+      )
+      .replace(
+        /</g,
+        '&lt;'
+      )
+      .replace(
+        />/g,
+        '&gt;'
+      )
+      .replace(
+        /"/g,
+        '&quot;'
+      )
+      .replace(
+        /'/g,
+        '&#039;'
+      );
+  }
+</script>
 
 </body>
 </html>
