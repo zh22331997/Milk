@@ -3,11 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>江翠校乳品訂購</title>
+
+  <title>江翠校乳品訂購測試</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f4f8f8;
+      color: #17324a;
+      font-family: Arial, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    .card {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 8px 24px rgba(20, 71, 69, 0.08);
+    }
+
+    .ok {
+      color: #23763c;
+      font-weight: 700;
+    }
+
+    .error {
+      color: #a13e3e;
+      font-weight: 700;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      padding: 14px;
+      border-radius: 10px;
+      background: #eef5f5;
+      overflow: auto;
+    }
+
+    iframe {
+      width: 0;
+      height: 0;
+      border: 0;
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>江翠校乳品訂購</h1>
-  <p>GitHub Pages 測試成功</p>
+
+  <div class="card">
+    <h1>江翠校乳品訂購</h1>
+
+    <p id="status">
+      正在連接 GAS……
+    </p>
+
+    <pre id="result">尚未取得資料</pre>
+  </div>
+
+  <iframe
+    id="gasBridge"
+    src="https://script.google.com/macros/s/AKfycbwhdJN59YAntFgURkVNhAD2N9t_0TyniNV6twOM5zFe/dev?bridge=1"
+  ></iframe>
+
+
+  <script>
+    const bridge =
+      document.getElementById('gasBridge');
+
+    const statusBox =
+      document.getElementById('status');
+
+    const resultBox =
+      document.getElementById('result');
+
+    const requestId =
+      `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+
+    window.addEventListener(
+      'message',
+      event => {
+
+        const message =
+          event.data || {};
+
+        if (
+          message.source !==
+          'milk-gas-bridge'
+        ) {
+          return;
+        }
+
+
+        if (
+          message.type ===
+          'bridge-ready'
+        ) {
+          statusBox.textContent =
+            'Bridge 已連線，正在讀取系統設定……';
+
+          bridge.contentWindow.postMessage(
+            {
+              source: 'milk-github',
+              action: 'bootstrap',
+              requestId: requestId
+            },
+            '*'
+          );
+
+          return;
+        }
+
+
+        if (
+          message.type === 'response' &&
+          message.requestId === requestId
+        ) {
+
+          if (message.success) {
+
+            statusBox.textContent =
+              'GAS 資料讀取成功';
+
+            statusBox.className =
+              'ok';
+
+            resultBox.textContent =
+              JSON.stringify(
+                message.data,
+                null,
+                2
+              );
+
+          } else {
+
+            statusBox.textContent =
+              'GAS 資料讀取失敗';
+
+            statusBox.className =
+              'error';
+
+            resultBox.textContent =
+              message.error ||
+              '未知錯誤';
+          }
+        }
+      }
+    );
+  </script>
+
 </body>
 </html>
