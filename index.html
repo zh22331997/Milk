@@ -3,502 +3,334 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>江翠校乳品訂購</title>
-
+  <title>江翠校乳品訂購｜GitHub 測試</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 24px;
-      background: #f4f8f8;
-      color: #17324a;
+      padding: 20px;
+      background: #f4f8fb;
+      color: #17324A;
       font-family: Arial, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
     }
-
+    .wrap { max-width: 760px; margin: 0 auto; }
     .card {
-      max-width: 720px;
-      margin: 0 auto;
+      background: #fff;
+      border-radius: 18px;
       padding: 20px;
-      border-radius: 16px;
-      background: #ffffff;
-      box-shadow: 0 8px 24px rgba(20, 71, 69, 0.08);
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(23, 50, 74, .08);
     }
-
-    h1 {
-      margin-top: 0;
-    }
-
-    .ok {
-      color: #23763c;
-      font-weight: 700;
-    }
-
-    .error {
-      color: #a13e3e;
-      font-weight: 700;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      border: 1px solid #cbd9df;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 6px;
-      padding: 12px;
-      border: 0;
-      border-radius: 10px;
-      background: #9ec5e8;
-      color: #17324a;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: default;
-    }
-
-    .result-card {
-      margin-top: 16px;
-      padding: 14px;
+    h1 { margin: 0 0 8px; font-size: 26px; }
+    h2 { margin: 0 0 14px; font-size: 20px; }
+    .sub { color: #667785; margin: 0; }
+    .notice {
+      margin-top: 14px;
+      padding: 12px 14px;
       border-radius: 12px;
-      background: #eef5f5;
+      background: #eef5fb;
+      line-height: 1.6;
     }
-
-    .muted {
-      color: #6c7d86;
-      font-size: 14px;
+    .notice.ok { background: #eef8f0; color: #25643a; }
+    .notice.error { background: #fff0f0; color: #9b3434; }
+    .notice.warn { background: #fff8e9; color: #805d12; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { margin-bottom: 14px; }
+    label { display:block; margin-bottom:6px; font-weight:700; }
+    input, select, textarea {
+      width:100%;
+      border:1px solid #cbd8e1;
+      border-radius:10px;
+      padding:12px;
+      font-size:16px;
+      color:#17324A;
+      background:#fff;
     }
-
-    .hidden-frame {
-      width: 0;
-      height: 0;
-      border: 0;
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
+    input[readonly] { background:#f2f5f7; }
+    textarea { min-height: 84px; resize: vertical; }
+    .checkrow { display:flex; gap:8px; align-items:center; margin: 8px 0 16px; }
+    .checkrow input { width:auto; }
+    button {
+      width:100%;
+      border:0;
+      border-radius:11px;
+      padding:13px 16px;
+      font-size:16px;
+      font-weight:700;
+      background:#A1C6EA;
+      color:#17324A;
+      cursor:pointer;
+    }
+    button:hover { background:#8FB9E2; }
+    button:disabled { opacity:.55; cursor:default; }
+    .secondary { background:#BBD1EA; }
+    .result {
+      margin-top:14px;
+      padding:14px;
+      border-radius:12px;
+      background:#eef5f5;
+      line-height:1.7;
+    }
+    .small { font-size:14px; color:#6b7b87; }
+    .hidden-frame { width:0; height:0; border:0; position:absolute; opacity:0; pointer-events:none; }
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .card { padding: 16px; }
+      .grid { grid-template-columns: 1fr; gap:0; }
     }
   </style>
 </head>
-
 <body>
-
-  <div class="card">
-    <h1>江翠校乳品訂購</h1>
-
-    <div class="ok">
-      GAS 查詢通道已準備
+  <div class="wrap">
+    <div class="card">
+      <h1>江翠校乳品訂購</h1>
+      <p class="sub">GitHub 測試送單版</p>
+      <div id="systemStatus" class="notice">正在讀取 GAS 系統設定……</div>
     </div>
 
-    <div class="field">
-      <label for="studentName">
-        學生中文全名
-      </label>
+    <div class="card">
+      <h2>測試送單</h2>
+      <div class="notice warn">
+        此頁目前只允許「測試學生」送單，而且第一階段只測「整月訂購」。正式學生姓名會被 GAS 拒絕。
+      </div>
 
-      <input
-        id="studentName"
-        type="text"
-        autocomplete="off"
-      >
+      <div class="grid" style="margin-top:14px">
+        <div class="field">
+          <label for="studentName">學生中文姓名</label>
+          <input id="studentName" value="測試學生" readonly>
+        </div>
+        <div class="field">
+          <label for="englishName">英文名（可留空）</label>
+          <input id="englishName" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="className">班級</label>
+          <select id="className"><option value="">讀取中……</option></select>
+        </div>
+        <div class="field">
+          <label for="phoneLast3">手機末三碼</label>
+          <input id="phoneLast3" inputmode="numeric" maxlength="3" placeholder="例如 245">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="productCode">訂購品項</label>
+        <select id="productCode"><option value="">讀取中……</option></select>
+      </div>
+
+      <div id="monthInfo" class="notice">訂購月份讀取中……</div>
+
+      <div class="checkrow">
+        <input id="needBag" type="checkbox">
+        <label for="needBag" style="margin:0;font-weight:400">需要收費袋</label>
+      </div>
+
+      <div class="field">
+        <label for="note">特殊備註（可留空）</label>
+        <textarea id="note" maxlength="100"></textarea>
+      </div>
+
+      <button id="submitBtn" type="button" disabled>確認並送出測試訂單</button>
+      <div id="submitResult"></div>
     </div>
 
-    <div class="field">
-      <label for="phoneLast3">
-        手機末三碼
-      </label>
-
-      <input
-        id="phoneLast3"
-        type="text"
-        inputmode="numeric"
-        maxlength="3"
-        autocomplete="off"
-      >
+    <div class="card">
+      <h2>查詢既有訂單</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="queryName">學生中文全名</label>
+          <input id="queryName">
+        </div>
+        <div class="field">
+          <label for="queryLast3">手機末三碼</label>
+          <input id="queryLast3" inputmode="numeric" maxlength="3">
+        </div>
+      </div>
+      <button id="queryBtn" class="secondary" type="button">查詢訂購內容</button>
+      <div id="queryResult"></div>
     </div>
-
-    <button
-      id="queryBtn"
-      type="button"
-    >
-      查詢訂購內容
-    </button>
-
-    <div id="queryResults"></div>
-
-    <p class="muted">
-      此頁目前只開放查詢測試，尚未開放送出訂單。
-    </p>
   </div>
 
-
-  <iframe
-    class="hidden-frame"
-    name="gasPostFrame"
-    id="gasPostFrame"
-  ></iframe>
-
-
-  <form
-    id="gasPostForm"
-    method="POST"
-    target="gasPostFrame"
-    action="https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec"
-    style="display:none"
-  >
-    <input
-      type="hidden"
-      name="action"
-      id="postAction"
-    >
-
-    <input
-      type="hidden"
-      name="requestId"
-      id="postRequestId"
-    >
-
-    <input
-      type="hidden"
-      name="payload"
-      id="postPayload"
-    >
+  <iframe class="hidden-frame" name="gasPostFrame" id="gasPostFrame"></iframe>
+  <form id="gasPostForm" method="POST" target="gasPostFrame"
+        action="https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec"
+        style="display:none">
+    <input type="hidden" name="action" id="postAction">
+    <input type="hidden" name="requestId" id="postRequestId">
+    <input type="hidden" name="payload" id="postPayload">
   </form>
 
-
 <script>
-  const queryBtn =
-    document.getElementById('queryBtn');
+  const form = document.getElementById('gasPostForm');
+  const systemStatus = document.getElementById('systemStatus');
+  const submitBtn = document.getElementById('submitBtn');
+  const submitResult = document.getElementById('submitResult');
+  const queryBtn = document.getElementById('queryBtn');
+  const queryResult = document.getElementById('queryResult');
+  let bootstrap = null;
+  const pending = new Map();
 
-  const queryResults =
-    document.getElementById('queryResults');
-
-  const gasPostForm =
-    document.getElementById('gasPostForm');
-
-  let currentQueryRequestId =
-    '';
-
-
-  function createRequestId() {
-    return (
-      Date.now() +
-      '-' +
-      Math.random().toString(36).slice(2)
-    );
+  function requestId() {
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 
-
-  function postToGas(
-    action,
-    payload
-  ) {
-    const requestId =
-      createRequestId();
-
-    document.getElementById(
-      'postAction'
-    ).value =
-      action;
-
-    document.getElementById(
-      'postRequestId'
-    ).value =
-      requestId;
-
-    document.getElementById(
-      'postPayload'
-    ).value =
-      JSON.stringify(
-        payload || {}
-      );
-
-    gasPostForm.submit();
-
-    return requestId;
+  function postToGas(action, payload) {
+    const id = requestId();
+    document.getElementById('postAction').value = action;
+    document.getElementById('postRequestId').value = id;
+    document.getElementById('postPayload').value = JSON.stringify(payload || {});
+    pending.set(id, action);
+    form.submit();
+    return id;
   }
 
+  window.addEventListener('message', event => {
+    const msg = event.data || {};
+    if (msg.source !== 'milk-gas-bridge' || msg.type !== 'response') return;
+    if (!pending.has(msg.requestId)) return;
+    const expected = pending.get(msg.requestId);
+    pending.delete(msg.requestId);
+    if (msg.action !== expected) return;
 
-  window.addEventListener(
-    'message',
-    event => {
+    if (msg.action === 'bootstrap') handleBootstrap(msg);
+    if (msg.action === 'query') handleQuery(msg);
+    if (msg.action === 'submit-test') handleSubmit(msg);
+  });
 
-      const message =
-        event.data || {};
-
-      if (
-        message.source !==
-        'milk-gas-bridge'
-      ) {
-        return;
-      }
-
-      if (
-        message.type !==
-        'response'
-      ) {
-        return;
-      }
-
-      if (
-        message.action !==
-        'query'
-      ) {
-        return;
-      }
-
-      if (
-        message.requestId !==
-        currentQueryRequestId
-      ) {
-        return;
-      }
-
-
-      queryBtn.disabled =
-        false;
-
-      queryBtn.textContent =
-        '查詢訂購內容';
-
-
-      if (
-        !message.success
-      ) {
-        queryResults.innerHTML =
-          `
-            <div class="result-card error">
-              ${escapeHtml(
-                message.error ||
-                '查詢失敗。'
-              )}
-            </div>
-          `;
-
-        return;
-      }
-
-
-      renderQueryResults(
-        message.data || []
-      );
-    }
-  );
-
-
-  queryBtn.addEventListener(
-    'click',
-    () => {
-
-      const studentName =
-        document
-          .getElementById(
-            'studentName'
-          )
-          .value
-          .trim();
-
-      const phoneLast3 =
-        document
-          .getElementById(
-            'phoneLast3'
-          )
-          .value
-          .trim();
-
-
-      if (
-        !studentName ||
-        !/^\d{3}$/.test(
-          phoneLast3
-        )
-      ) {
-        queryResults.innerHTML =
-          `
-            <div class="result-card error">
-              請輸入學生中文全名與 3 位手機末三碼。
-            </div>
-          `;
-
-        return;
-      }
-
-
-      queryBtn.disabled =
-        true;
-
-      queryBtn.textContent =
-        '查詢中……';
-
-      queryResults.innerHTML =
-        '';
-
-
-      currentQueryRequestId =
-        postToGas(
-          'query',
-          {
-            studentName,
-            phoneLast3
-          }
-        );
-    }
-  );
-
-
-  function renderQueryResults(
-    orders
-  ) {
-
-    if (
-      !orders.length
-    ) {
-      queryResults.innerHTML =
-        `
-          <div class="result-card">
-            查無符合的訂購資料。
-          </div>
-        `;
-
+  function handleBootstrap(msg) {
+    if (!msg.success) {
+      systemStatus.className = 'notice error';
+      systemStatus.textContent = msg.error || '系統設定讀取失敗。';
       return;
     }
 
+    bootstrap = msg.data;
+    const status = bootstrap.status || {};
+    systemStatus.className = status.canOrder ? 'notice ok' : 'notice warn';
+    systemStatus.textContent = `${status.label || '系統資料已讀取'}｜${bootstrap.period?.targetMonthText || ''}`;
 
-    queryResults.innerHTML =
-      orders
-        .map(
-          order => `
-            <div class="result-card">
+    const classSelect = document.getElementById('className');
+    classSelect.innerHTML = '<option value="">請選擇班級</option>' +
+      (bootstrap.classes || []).map(v => `<option value="${escAttr(v)}">${esc(v)}</option>`).join('');
 
-              <div>
-                <strong>
-                  ${escapeHtml(
-                    order.targetMonth || ''
-                  )}
-                </strong>
-              </div>
+    const productSelect = document.getElementById('productCode');
+    productSelect.innerHTML = '<option value="">請選擇品項</option>' +
+      (bootstrap.products || []).map(p => `<option value="${escAttr(p.code)}">${esc(p.name)}</option>`).join('');
 
-              <div>
-                ${escapeHtml(
-                  order.productName || ''
-                )}
-              </div>
+    const p = bootstrap.period || {};
+    document.getElementById('monthInfo').textContent =
+      `${p.targetMonthText || ''}｜${p.displayText || ''}｜整月 ${p.bottleCount || 0} 瓶｜每瓶 NT$${p.unitPrice || 0}｜合計 NT$${p.amount || 0}`;
 
-              <hr>
-
-              <div>
-                學生：
-                ${escapeHtml(
-                  order.studentName || ''
-                )}
-              </div>
-
-              <div>
-                班級：
-                ${escapeHtml(
-                  order.className || ''
-                )}
-              </div>
-
-              <div>
-                訂購方式：
-                ${escapeHtml(
-                  order.orderType || ''
-                )}
-              </div>
-
-              <div>
-                配送：
-                ${escapeHtml(
-                  order.displayText || ''
-                )}
-              </div>
-
-              <div>
-                瓶數：
-                ${escapeHtml(
-                  String(
-                    order.deliveryCount || ''
-                  )
-                )}
-              </div>
-
-              <div>
-                品項：
-                ${escapeHtml(
-                  order.productName || ''
-                )}
-              </div>
-
-              <div>
-                應繳金額：
-                NT$ ${escapeHtml(
-                  String(
-                    order.amount || 0
-                  )
-                )}
-              </div>
-
-              <div>
-                訂單編號：
-                ${escapeHtml(
-                  order.orderNumber || ''
-                )}
-              </div>
-
-            </div>
-          `
-        )
-        .join('');
+    submitBtn.disabled = !status.canOrder;
   }
 
+  submitBtn.addEventListener('click', () => {
+    if (!bootstrap) return;
 
-  function escapeHtml(
-    value
-  ) {
-    return String(
-      value == null
-        ? ''
-        : value
-    )
-      .replace(
-        /&/g,
-        '&amp;'
-      )
-      .replace(
-        /</g,
-        '&lt;'
-      )
-      .replace(
-        />/g,
-        '&gt;'
-      )
-      .replace(
-        /"/g,
-        '&quot;'
-      )
-      .replace(
-        /'/g,
-        '&#039;'
-      );
+    const className = document.getElementById('className').value;
+    const phoneLast3 = document.getElementById('phoneLast3').value.trim();
+    const productCode = document.getElementById('productCode').value;
+
+    if (!className) return showSubmitError('請選擇班級。');
+    if (!/^\d{3}$/.test(phoneLast3)) return showSubmitError('請輸入 3 位手機末三碼。');
+    if (!productCode) return showSubmitError('請選擇訂購品項。');
+
+    const product = (bootstrap.products || []).find(p => p.code === productCode);
+    const payload = {
+      studentName: '測試學生',
+      englishName: document.getElementById('englishName').value,
+      className,
+      phoneLast3,
+      needBag: document.getElementById('needBag').checked,
+      productCode,
+      rotationMode: product && product.type === '輪送品項' ? '全部口味輪送' : '',
+      selectedRotationCodes: [],
+      orderType: '整月訂購',
+      selectedDates: [],
+      note: document.getElementById('note').value,
+      requestToken: requestId()
+    };
+
+    if (!confirm(`確定送出測試訂單？\n\n測試學生／${className}\n${product ? product.name : productCode}\n${bootstrap.period?.displayText || ''}`)) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '送出並確認資料中……';
+    submitResult.innerHTML = '';
+    postToGas('submit-test', payload);
+  });
+
+  function handleSubmit(msg) {
+    submitBtn.disabled = !(bootstrap && bootstrap.status && bootstrap.status.canOrder);
+    submitBtn.textContent = '確認並送出測試訂單';
+
+    if (!msg.success) {
+      showSubmitError(msg.error || '送單失敗。');
+      return;
+    }
+
+    const result = msg.data || {};
+    const order = result.order || {};
+    submitResult.innerHTML = `
+      <div class="notice ok">
+        <strong>測試訂單已成功寫入，而且後端再次確認資料存在。</strong><br>
+        訂單編號：${esc(order.orderNumber || '')}<br>
+        學生：${esc(order.studentName || '')}<br>
+        班級：${esc(order.className || '')}<br>
+        品項：${esc(order.productName || '')}<br>
+        瓶數：${esc(String(order.deliveryCount || ''))}<br>
+        應繳金額：NT$${esc(String(order.amount || 0))}
+      </div>`;
   }
+
+  function showSubmitError(text) {
+    submitResult.innerHTML = `<div class="notice error">${esc(text)}</div>`;
+  }
+
+  queryBtn.addEventListener('click', () => {
+    const studentName = document.getElementById('queryName').value.trim();
+    const phoneLast3 = document.getElementById('queryLast3').value.trim();
+    if (!studentName || !/^\d{3}$/.test(phoneLast3)) {
+      queryResult.innerHTML = '<div class="notice error">請輸入學生中文全名與 3 位手機末三碼。</div>';
+      return;
+    }
+    queryBtn.disabled = true;
+    queryBtn.textContent = '查詢中……';
+    queryResult.innerHTML = '';
+    postToGas('query', {studentName, phoneLast3});
+  });
+
+  function handleQuery(msg) {
+    queryBtn.disabled = false;
+    queryBtn.textContent = '查詢訂購內容';
+    if (!msg.success) {
+      queryResult.innerHTML = `<div class="notice error">${esc(msg.error || '查詢失敗。')}</div>`;
+      return;
+    }
+    const orders = msg.data || [];
+    if (!orders.length) {
+      queryResult.innerHTML = '<div class="result">查無符合的訂購資料。</div>';
+      return;
+    }
+    queryResult.innerHTML = orders.map(o => `
+      <div class="result">
+        <strong>${esc(o.targetMonth || '')}｜${esc(o.productName || '')}</strong><br>
+        學生：${esc(o.studentName || '')}<br>
+        班級：${esc(o.className || '')}<br>
+        配送：${esc(o.displayText || '')}<br>
+        瓶數：${esc(String(o.deliveryCount || ''))}<br>
+        應繳金額：NT$${esc(String(o.amount || 0))}<br>
+        訂單編號：${esc(o.orderNumber || '')}
+      </div>`).join('');
+  }
+
+  function esc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function escAttr(v) { return esc(v); }
+
+  postToGas('bootstrap', {});
 </script>
-
 </body>
 </html>
