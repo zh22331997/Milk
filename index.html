@@ -1,433 +1,3624 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
+  <base target="_top">
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>江翠校乳品訂購｜GitHub 測試</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1"
+  >
+
+  <title>江翠校乳品訂購</title>
+
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --primary: #2f9e9b;
+      --primary-dark: #1f6f6c;
+      --primary-soft: #e9f8f7;
+      --ink: #18302f;
+      --muted: #667a79;
+      --line: #d7e4e3;
+      --surface: #ffffff;
+      --page: #f4f8f8;
+      --danger: #b63c3c;
+      --shadow:
+        0 12px 30px
+        rgba(20, 71, 69, .10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      padding: 20px;
-      background: #f4f8fb;
-      color: #17324A;
-      font-family: Arial, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-    }
-    .wrap { max-width: 760px; margin: 0 auto; }
-    .card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(23, 50, 74, .08);
-    }
-    h1 { margin: 0 0 8px; font-size: 26px; }
-    h2 { margin: 0 0 14px; font-size: 20px; }
-    .sub { color: #667785; margin: 0; }
-    .notice {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: #eef5fb;
+      background: var(--page);
+      color: var(--ink);
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans TC",
+        "PingFang TC",
+        sans-serif;
       line-height: 1.6;
     }
-    .notice.ok { background: #eef8f0; color: #25643a; }
-    .notice.error { background: #fff0f0; color: #9b3434; }
-    .notice.warn { background: #fff8e9; color: #805d12; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field { margin-bottom: 14px; }
-    label { display:block; margin-bottom:6px; font-weight:700; }
-    input, select, textarea {
-      width:100%;
-      border:1px solid #cbd8e1;
-      border-radius:10px;
-      padding:12px;
-      font-size:16px;
-      color:#17324A;
-      background:#fff;
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
     }
-    input[readonly] { background:#f2f5f7; }
-    textarea { min-height: 84px; resize: vertical; }
-    .checkrow { display:flex; gap:8px; align-items:center; margin: 8px 0 16px; }
-    .checkrow input { width:auto; }
+
     button {
-      width:100%;
-      border:0;
-      border-radius:11px;
-      padding:13px 16px;
-      font-size:16px;
-      font-weight:700;
-      background:#A1C6EA;
-      color:#17324A;
-      cursor:pointer;
+      cursor: pointer;
     }
-    button:hover { background:#8FB9E2; }
-    button:disabled { opacity:.55; cursor:default; }
-    .secondary { background:#BBD1EA; }
-    .tertiary {
-      margin-top: 10px;
-      background:#DAE3E5;
+
+    [hidden] {
+      display: none !important;
     }
-    .result {
-      margin-top:14px;
-      padding:14px;
-      border-radius:12px;
-      background:#eef5f5;
-      line-height:1.7;
+
+    .page {
+      width: min(100%, 980px);
+      margin: 0 auto;
+      padding: 16px 12px 40px;
     }
-    .small { font-size:14px; color:#6b7b87; }
-    .debug {
+
+    .hero {
+      padding: 22px 20px;
+      margin-bottom: 14px;
+      border: 1px solid #d5ebe9;
+      border-radius: 22px;
+      background:
+        linear-gradient(
+          135deg,
+          #def7f5,
+          #ffffff
+        );
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      color: var(--primary-dark);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    h1 {
+      margin: 5px 0;
+      font-size: clamp(
+        28px,
+        6vw,
+        42px
+      );
+      line-height: 1.2;
+    }
+
+    .hero-sub {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .pill.open {
+      border-color: #ccebd5;
+      background: #e8f8ec;
+      color: #23763c;
+    }
+
+    .pill.closed {
+      border-color: #f0d0d0;
+      background: #fff1f1;
+      color: #a13e3e;
+    }
+
+    .pill.waiting {
+      border-color: #ead9a5;
+      background: #fff7df;
+      color: #8a6515;
+    }
+
+    .tabs {
+      position: sticky;
+      top: 6px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 4px;
+      margin-bottom: 14px;
+      border-radius: 14px;
+      background: #e9f0f0;
+      box-shadow:
+        0 5px 18px
+        rgba(20, 71, 69, .08);
+    }
+
+    .tab-btn {
+      padding: 10px;
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--primary-dark);
+      box-shadow:
+        0 3px 12px
+        rgba(20, 71, 69, .10);
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .card {
+      padding: 17px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow:
+        0 8px 22px
+        rgba(20, 71, 69, .06);
+    }
+
+    .section-title {
+      margin: 0 0 13px;
+      font-size: 20px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+      gap: 13px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 900;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #cfdedd;
+      border-radius: 11px;
+      outline: none;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow:
+        0 0 0 4px
+        rgba(47, 158, 155, .12);
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .hint {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .notice {
+      padding: 11px 12px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      background: #fff7df;
+      color: #6d5417;
+    }
+
+    .notice.info {
+      background: #edf8ff;
+      color: #245f7f;
+    }
+
+    .notice.error {
+      background: #fff0f0;
+      color: #9b3535;
+    }
+
+    .intro-image-card {
+      margin-bottom: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow:
+        0 8px 22px
+        rgba(20, 71, 69, .06);
+    }
+
+    .intro-image-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .choice-row {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+      gap: 9px;
+    }
+
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .choice.active {
+      border-color: var(--primary);
+      background: #f3fbfa;
+    }
+
+    .choice input {
+      width: auto;
+      margin-top: 4px;
+    }
+
+    .calendar-wrap {
+      margin-top: 12px;
+    }
+
+    .calendar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          7,
+          1fr
+        );
+      gap: 6px;
+    }
+
+    .weekday {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .calendar-day {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      font-weight: 800;
+    }
+
+    .calendar-day.blank {
+      border: 0;
+      background: transparent;
+      cursor: default;
+    }
+
+    .calendar-day.disabled {
+      background: #f2f4f4;
+      color: #a4adac;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .calendar-day.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .date-summary {
       margin-top: 10px;
       padding: 10px 12px;
-      background: #f6f8fa;
       border-radius: 10px;
-      font-size: 13px;
-      color: #536574;
-      white-space: pre-wrap;
-      word-break: break-word;
+      background: #f5fafa;
+      font-weight: 900;
     }
-    .hidden-frame { width:0; height:0; border:0; position:absolute; opacity:0; pointer-events:none; }
-    @media (max-width: 640px) {
-      body { padding: 12px; }
-      .card { padding: 16px; }
-      .grid { grid-template-columns: 1fr; gap:0; }
+
+    .date-summary.error {
+      background: #fff0f0;
+      color: #9b3535;
+    }
+
+    .product-section {
+      margin-bottom: 22px;
+    }
+
+    .product-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .series-title {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          3,
+          minmax(0, 1fr)
+        );
+      gap: 11px;
+    }
+
+    .product-card {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #c9d9d8;
+      border-radius: 15px;
+      background: #fff;
+      box-shadow:
+        0 4px 12px
+        rgba(20, 71, 69, .08);
+      transition: .18s ease;
+    }
+
+    .product-card:hover {
+      border-color: #8ebfbc;
+      transform: translateY(-1px);
+    }
+
+    .product-card.selected {
+      border-color: var(--primary);
+      background: #f3fbfa;
+      box-shadow:
+        0 0 0 3px
+        rgba(47, 158, 155, .14),
+        0 8px 20px
+        rgba(47, 158, 155, .18);
+    }
+
+    .product-button {
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+    }
+
+    .product-body {
+      padding: 16px 18px;
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .product-price {
+      margin-top: 2px;
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .product-desc {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .custom-hint {
+      margin-top: 7px;
+      padding: 6px 7px;
+      border-radius: 8px;
+      background: #fff7df;
+      color: #815f13;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .selected-badge {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .product-card.selected
+    .selected-badge {
+      display: block;
+    }
+
+    .inline-rotation {
+      padding: 13px 11px 14px;
+      border-top: 1px solid var(--line);
+      background: #f8fcfc;
+    }
+
+    .inline-rotation-title {
+      margin-bottom: 9px;
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .inline-mode-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .inline-flavor-options {
+      padding-top: 11px;
+      margin-top: 11px;
+      border-top: 1px dashed #c7dbda;
+    }
+
+    .flavor-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .flavor-title small {
+      color: var(--danger);
+    }
+
+    .flavor-check-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+      gap: 7px;
+    }
+
+    .flavor-check {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .flavor-check.disabled {
+      opacity: .5;
+      background: #f3f3f3;
+    }
+
+    .flavor-check input {
+      width: auto;
+      margin: 0;
+    }
+
+    .flavor-count {
+      padding: 7px 8px;
+      margin-top: 8px;
+      border-radius: 8px;
+      background: #fff0f0;
+      color: #a23c3c;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .flavor-count.complete {
+      background: #e8f8ec;
+      color: #23763c;
+    }
+
+    .fixed-flavors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .fixed-flavors span {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #e9f8f7;
+      color: var(--primary-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          4,
+          minmax(0, 1fr)
+        );
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    .summary-item {
+      padding: 10px;
+      border-radius: 11px;
+      background: #f5fafa;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-value {
+      margin-top: 2px;
+      font-weight: 900;
+    }
+
+    .amount {
+      color: #a55a00;
+      font-size: 22px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 12px;
+      font-weight: 900;
+    }
+
+    .primary-btn {
+      border: 0;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .primary-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .primary-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .receipt {
+      width: min(100%, 620px);
+      padding: 20px;
+      margin: 0 auto;
+      border: 2px solid #cce4e2;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .receipt-simple {
+      text-align: center;
+    }
+
+    .success-mark {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 11px;
+      border-radius: 50%;
+      background: #e8f8ec;
+      color: #23763c;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .success-main {
+      margin-top: 18px;
+      text-align: left;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #d9e5e4;
+    }
+
+    .receipt-row span:first-child {
+      color: var(--muted);
+    }
+
+    .receipt-row strong {
+      max-width: 68%;
+      text-align: right;
+    }
+
+    .success-amount {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 16px;
+      margin-top: 17px;
+      border-radius: 14px;
+      background: #fff7df;
+      color: #76520c;
+    }
+
+    .success-amount span {
+      font-weight: 900;
+    }
+
+    .success-amount strong {
+      color: #9a5a00;
+      font-size: 29px;
+    }
+
+    .order-number-box {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-top: 11px;
+      border-radius: 11px;
+      background: #f4f8f8;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .order-number-box strong {
+      color: var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .result-card {
+      padding: 14px;
+      margin-top: 12px;
+      border: 1px dashed #b8d9d8;
+      border-radius: 14px;
+      background: #fbfefe;
+    }
+
+    .loading {
+      padding: 45px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 11px;
+      border: 4px solid #dbe9e8;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation:
+        spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform:
+          rotate(360deg);
+      }
+    }
+
+
+    .payment-alert { margin:16px 0; padding:16px 18px; border:2px solid #e0a100; border-radius:14px; background:#fff4cc; color:#6f4c00; text-align:left; font-size:16px; font-weight:900; line-height:1.7; box-shadow:0 6px 16px rgba(166,109,0,.12); }
+    .payment-alert-title { display:block; margin-bottom:4px; color:#a45f00; font-size:18px; font-weight:900; }
+
+    @media (max-width: 760px) {
+      .product-grid {
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(0, 1fr)
+          );
+      }
+
+      .summary-grid {
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(0, 1fr)
+          );
+      }
+    }
+
+    @media (max-width: 520px) {
+      .page {
+        padding:
+          10px
+          10px
+          32px;
+      }
+
+      .hero {
+        padding:
+          18px
+          15px;
+        border-radius:
+          18px;
+      }
+
+      .card {
+        padding:
+          14px;
+      }
+
+      .field-grid,
+      .choice-row {
+        grid-template-columns:
+          1fr;
+      }
+
+      .product-grid {
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(0, 1fr)
+          );
+        gap: 8px;
+      }
+
+      .product-body {
+        padding:
+          13px
+          12px;
+      }
+
+      .product-name {
+        font-size:
+          15px;
+      }
+
+      .flavor-check-grid {
+        grid-template-columns:
+          1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns:
+          1fr 1fr;
+      }
+
+      .receipt-row {
+        display: grid;
+        gap: 2px;
+      }
+
+      .receipt-row strong {
+        max-width: none;
+        text-align: left;
+      }
+
+      .order-number-box {
+        display: grid;
+        gap: 2px;
+        text-align: left;
+      }
+
+      .calendar-day {
+        min-height: 38px;
+        padding: 4px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>江翠校乳品訂購</h1>
-      <p class="sub">GitHub 測試送單版</p>
-      <div id="systemStatus" class="notice">正在讀取 GAS 系統設定……</div>
-      <button id="retryBootstrapBtn" class="tertiary" type="button" hidden>重新讀取系統設定</button>
-      <div id="debugBox" class="debug">尚未收到 GAS 回傳。</div>
+  <main class="page">
+
+    <div
+      id="loading"
+      class="loading"
+    >
+      <div class="spinner"></div>
+      正在載入乳品訂購資料……
     </div>
 
-    <div class="card">
-      <h2>測試送單</h2>
-      <div class="notice warn">
-        此頁目前只允許「測試學生」送單。若正式系統尚未開放，後端仍會依原規則拒絕送單；這不是按鈕故障。
-      </div>
+    <div
+      id="app"
+      hidden
+    >
 
-      <div class="grid" style="margin-top:14px">
-        <div class="field">
-          <label for="studentName">學生中文姓名</label>
-          <input id="studentName" value="測試學生" readonly>
+      <section class="hero">
+        <div
+          id="branchName"
+          class="eyebrow"
+        >
+          江翠校
         </div>
-        <div class="field">
-          <label for="englishName">英文名（可留空）</label>
-          <input id="englishName" autocomplete="off">
+
+        <h1>
+          每月乳品訂購
+        </h1>
+
+        <p
+          id="periodText"
+          class="hero-sub"
+        ></p>
+
+        <div class="status-row">
+          <span
+            id="statusPill"
+            class="pill"
+          ></span>
+
+          <span
+            id="deadlinePill"
+            class="pill"
+          ></span>
+
+          <span
+            id="bottlePill"
+            class="pill"
+          ></span>
         </div>
-        <div class="field">
-          <label for="className">班級</label>
-          <select id="className"><option value="">等待系統資料……</option></select>
-        </div>
-        <div class="field">
-          <label for="phoneLast3">手機末三碼</label>
-          <input id="phoneLast3" inputmode="numeric" maxlength="3" placeholder="例如 245">
-        </div>
+      </section>
+
+      <div class="tabs">
+        <button
+          class="tab-btn active"
+          data-tab="order"
+          type="button"
+        >
+          立即訂購
+        </button>
+
+        <button
+          class="tab-btn"
+          data-tab="query"
+          type="button"
+        >
+          查詢訂購
+        </button>
       </div>
 
-      <div class="field">
-        <label for="productCode">訂購品項</label>
-        <select id="productCode"><option value="">等待系統資料……</option></select>
-      </div>
+      <section
+        id="orderPanel"
+        class="panel active"
+      >
+        <div id="statusNotice"></div>
 
-      <div id="monthInfo" class="notice">訂購月份等待系統資料……</div>
+        <section class="intro-image-card">
+          <img
+            src="https://raw.githubusercontent.com/zh22331997/zhenghua/main/milk.jpg"
+            alt="產品介紹"
+          >
+        </section>
 
-      <div class="checkrow">
-        <input id="needBag" type="checkbox">
-        <label for="needBag" style="margin:0;font-weight:400">需要收費袋</label>
-      </div>
+        <form
+          id="orderForm"
+          novalidate
+        >
 
-      <div class="field">
-        <label for="note">特殊備註（可留空）</label>
-        <textarea id="note" maxlength="100"></textarea>
-      </div>
+          <section class="card">
+            <h2 class="section-title">
+              1. 學生資料
+            </h2>
 
-      <button id="submitBtn" type="button" disabled>等待系統設定</button>
-      <div id="submitResult"></div>
+            <div class="field-grid">
+              <div class="field">
+                <label
+                  class="field-label"
+                  for="studentName"
+                >
+                  學生中文全名
+                </label>
+
+                <input
+                  id="studentName"
+                  maxlength="20"
+                  autocomplete="off"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="englishName">英文名（選填）</label>
+                <input id="englishName" maxlength="30" autocomplete="off">
+              </div>
+
+              <div class="field">
+                <label
+                  class="field-label"
+                  for="className"
+                >
+                  班級
+                </label>
+
+                <select
+                  id="className"
+                  required
+                ></select>
+              </div>
+
+              <div class="field full">
+                <label
+                  class="field-label"
+                  for="phoneLast3"
+                >
+                  手機末三碼
+                </label>
+
+                <input
+                  id="phoneLast3"
+                  inputmode="numeric"
+                  maxlength="3"
+                  autocomplete="off"
+                  required
+                >
+
+                <div
+                  id="queryNotice"
+                  class="hint"
+                ></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">
+              2. 訂購方式
+            </h2>
+
+            <div class="choice-row">
+              <label
+                class="choice active"
+                id="fullMonthChoice"
+              >
+                <input
+                  type="radio"
+                  name="orderType"
+                  value="整月訂購"
+                  checked
+                >
+
+                <span>
+                  <strong>
+                    整月訂購
+                  </strong>
+                  <br>
+
+                  <small id="fullMonthText">
+                    —
+                  </small>
+                </span>
+              </label>
+
+              <label
+                class="choice"
+                id="customDateChoice"
+              >
+                <input
+                  type="radio"
+                  name="orderType"
+                  value="自選配送日期"
+                >
+
+                <span>
+                  <strong>
+                    自選配送日期
+                  </strong>
+                  <br>
+
+                  <small>
+                    可複選日期，假日不可選
+                  </small>
+                </span>
+              </label>
+            </div>
+
+            <div
+              id="calendarSection"
+              class="calendar-wrap"
+              hidden
+            >
+              <div class="calendar-head">
+                <strong id="calendarTitle">
+                  —
+                </strong>
+
+                <span class="hint">
+                  點日期可選取或取消
+                </span>
+              </div>
+
+              <div
+                id="calendarGrid"
+                class="calendar-grid"
+              ></div>
+
+              <div
+                id="dateSummary"
+                class="date-summary"
+              >
+                尚未選擇配送日期
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">
+              3. 選擇訂購品項
+            </h2>
+
+            <div id="productSections"></div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">
+              4. 其他需求
+            </h2>
+
+            <label class="field-label">
+              是否需要乳品收費袋
+            </label>
+
+            <div class="choice-row">
+              <label class="choice">
+                <input
+                  type="radio"
+                  name="needBag"
+                  value="false"
+                  checked
+                >
+
+                <span>
+                  <strong>
+                    不需要
+                  </strong>
+                  <br>
+
+                  <small>
+                    我會轉帳或自行至櫃檯繳費
+                  </small>
+                </span>
+              </label>
+
+              <label class="choice">
+                <input
+                  type="radio"
+                  name="needBag"
+                  value="true"
+                >
+
+                <span>
+                  <strong>
+                    需要
+                  </strong>
+                  <br>
+
+                  <small>
+                    請提供乳品收費袋
+                  </small>
+                </span>
+              </label>
+            </div>
+
+            <div
+              id="bagNotice"
+              class="hint"
+              style="margin-top:8px"
+            ></div>
+
+            <div style="margin-top:15px">
+              <label
+                class="field-label"
+                for="note"
+              >
+                特殊備註（選填）
+              </label>
+
+              <textarea
+                id="note"
+                maxlength="100"
+                placeholder="如有特殊需求，請在此說明。"
+              ></textarea>
+
+              <div class="hint">
+                最多 100 字
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">
+              訂購摘要
+            </h2>
+
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-label">
+                  訂購月份
+                </div>
+
+                <div
+                  id="summaryMonth"
+                  class="summary-value"
+                >
+                  —
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-label">
+                  訂購方式
+                </div>
+
+                <div
+                  id="summaryType"
+                  class="summary-value"
+                >
+                  整月訂購
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-label">
+                  配送天數
+                </div>
+
+                <div
+                  id="summaryDays"
+                  class="summary-value"
+                >
+                  —
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-label">
+                  應繳金額
+                </div>
+
+                <div
+                  id="summaryAmount"
+                  class="summary-value amount"
+                >
+                  NT$ 0
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-label">
+                  訂購品項
+                </div>
+
+                <div
+                  id="summaryProduct"
+                  class="summary-value"
+                >
+                  尚未選擇
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="orderNotice"
+              class="notice"
+            ></div>
+
+            <div id="submitError" class="notice error" hidden></div>
+
+            <button
+              id="submitBtn"
+              class="primary-btn"
+              type="submit"
+            >
+              確認並送出訂購
+            </button>
+          </section>
+        </form>
+
+        <section
+          id="successSection"
+          hidden
+        ></section>
+      </section>
+
+      <section
+        id="queryPanel"
+        class="panel"
+      >
+        <section class="card">
+          <h2 class="section-title">
+            查詢已送出的訂購
+          </h2>
+
+          <div class="field-grid">
+            <div class="field">
+              <label
+                class="field-label"
+                for="queryStudentName"
+              >
+                學生中文全名
+              </label>
+
+              <input
+                id="queryStudentName"
+                autocomplete="off"
+              >
+            </div>
+
+            <div class="field">
+              <label
+                class="field-label"
+                for="queryPhoneLast3"
+              >
+                手機末三碼
+              </label>
+
+              <input
+                id="queryPhoneLast3"
+                inputmode="numeric"
+                maxlength="3"
+                autocomplete="off"
+              >
+            </div>
+          </div>
+
+          <div
+            class="hint"
+            style="margin:8px 0 13px"
+          >
+            查詢結果不顯示繳費狀態，也不提供線上修改。
+          </div>
+
+          <button
+            id="queryBtn"
+            class="primary-btn"
+            type="button"
+          >
+            查詢訂購內容
+          </button>
+
+          <div id="queryResults"></div>
+        </section>
+      </section>
+
     </div>
+  </main>
 
-    <div class="card">
-      <h2>查詢既有訂單</h2>
-      <div class="grid">
-        <div class="field">
-          <label for="queryName">學生中文全名</label>
-          <input id="queryName">
-        </div>
-        <div class="field">
-          <label for="queryLast3">手機末三碼</label>
-          <input id="queryLast3" inputmode="numeric" maxlength="3">
-        </div>
-      </div>
-      <button id="queryBtn" class="secondary" type="button">查詢訂購內容</button>
-      <div id="queryResult"></div>
-    </div>
-  </div>
+  <script>
+    const GAS_ENDPOINT =
+      'https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec';
 
-  <iframe class="hidden-frame" name="gasPostFrame" id="gasPostFrame"></iframe>
-  <form id="gasPostForm" method="POST" target="gasPostFrame"
-        action="https://script.google.com/macros/s/AKfycbxwLK8W7szrbDwW2LFddVUDUdnrVCnCOCep4RNBKx1B-dXq24kUkZ-cXTT-cwu8KK__FA/exec"
-        style="display:none">
-    <input type="hidden" name="action" id="postAction">
-    <input type="hidden" name="requestId" id="postRequestId">
-    <input type="hidden" name="payload" id="postPayload">
-  </form>
+    let appData = null;
+    let selectedProduct = null;
 
-<script>
-  const form = document.getElementById('gasPostForm');
-  const systemStatus = document.getElementById('systemStatus');
-  const retryBootstrapBtn = document.getElementById('retryBootstrapBtn');
-  const debugBox = document.getElementById('debugBox');
-  const submitBtn = document.getElementById('submitBtn');
-  const submitResult = document.getElementById('submitResult');
-  const queryBtn = document.getElementById('queryBtn');
-  const queryResult = document.getElementById('queryResult');
+    const selectedDates =
+      new Set();
 
-  let bootstrap = null;
-  let bootstrapRequestId = '';
-  let bootstrapTimer = null;
-  const pending = new Map();
+    const gasPending =
+      new Map();
 
-  function createRequestId() {
-    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  }
-
-  function setDebug(text) {
-    debugBox.textContent = text;
-  }
-
-  function postToGas(action, payload) {
-    const id = createRequestId();
-    document.getElementById('postAction').value = action;
-    document.getElementById('postRequestId').value = id;
-    document.getElementById('postPayload').value = JSON.stringify(payload || {});
-    pending.set(id, action);
-    form.submit();
-    setDebug(`已送出 ${action}\nrequestId=${id}\n等待 GAS 回傳……`);
-    return id;
-  }
-
-  function loadBootstrap() {
-    if (bootstrapTimer) clearTimeout(bootstrapTimer);
-    bootstrap = null;
-    submitBtn.disabled = true;
-    submitBtn.textContent = '等待系統設定';
-    retryBootstrapBtn.hidden = true;
-    systemStatus.className = 'notice';
-    systemStatus.textContent = '正在讀取 GAS 系統設定……';
-
-    bootstrapRequestId = postToGas('bootstrap', {});
-
-    bootstrapTimer = setTimeout(() => {
-      if (bootstrap) return;
-      if (!pending.has(bootstrapRequestId)) return;
-      pending.delete(bootstrapRequestId);
-      systemStatus.className = 'notice error';
-      systemStatus.textContent = '讀取超過 15 秒，尚未收到 GAS 回傳。';
-      retryBootstrapBtn.hidden = false;
-      setDebug(`bootstrap 逾時\nrequestId=${bootstrapRequestId}\n請按「重新讀取系統設定」。`);
-    }, 15000);
-  }
-
-  retryBootstrapBtn.addEventListener('click', loadBootstrap);
-
-  window.addEventListener('message', event => {
-    const msg = event.data || {};
-
-    if (msg.source !== 'milk-gas-bridge' || msg.type !== 'response') {
-      return;
+    function makeRequestId() {
+      return (
+        Date.now().toString(36) +
+        '-' +
+        Math.random().toString(36).slice(2, 10)
+      );
     }
 
-    setDebug(
-      `收到 GAS 回傳\naction=${String(msg.action || '')}\nrequestId=${String(msg.requestId || '')}\nsuccess=${String(Boolean(msg.success))}` +
-      (msg.error ? `\nerror=${msg.error}` : '')
+    function isTrustedGasOrigin(origin) {
+      if (!origin) return false;
+
+      try {
+        const url = new URL(origin);
+
+        return (
+          url.protocol === 'https:' &&
+          (
+            url.hostname === 'script.google.com' ||
+            url.hostname.endsWith('.googleusercontent.com')
+          )
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function cleanupGasRequest(requestId) {
+      const pending =
+        gasPending.get(requestId);
+
+      if (!pending) return;
+
+      clearTimeout(pending.timer);
+
+      if (pending.form?.parentNode) {
+        pending.form.parentNode.removeChild(
+          pending.form
+        );
+      }
+
+      setTimeout(
+        () => {
+          if (pending.frame?.parentNode) {
+            pending.frame.parentNode.removeChild(
+              pending.frame
+            );
+          }
+        },
+        100
+      );
+
+      gasPending.delete(requestId);
+    }
+
+    function callGas(
+      action,
+      payload,
+      timeoutMs = 30000
+    ) {
+      return new Promise(
+        (resolve, reject) => {
+          const requestId =
+            makeRequestId();
+
+          const frameName =
+            'gasFrame_' +
+            requestId.replace(
+              /[^a-zA-Z0-9_]/g,
+              '_'
+            );
+
+          const frame =
+            document.createElement(
+              'iframe'
+            );
+
+          frame.name = frameName;
+          frame.hidden = true;
+          frame.setAttribute(
+            'aria-hidden',
+            'true'
+          );
+
+          const form =
+            document.createElement(
+              'form'
+            );
+
+          form.method = 'POST';
+          form.action = GAS_ENDPOINT;
+          form.target = frameName;
+          form.hidden = true;
+
+          [
+            ['action', action],
+            ['requestId', requestId],
+            [
+              'payload',
+              JSON.stringify(
+                payload || {}
+              )
+            ]
+          ].forEach(
+            ([name, value]) => {
+              const input =
+                document.createElement(
+                  'input'
+                );
+
+              input.type = 'hidden';
+              input.name = name;
+              input.value = value;
+              form.appendChild(input);
+            }
+          );
+
+          const timer =
+            setTimeout(
+              () => {
+                cleanupGasRequest(
+                  requestId
+                );
+
+                reject(
+                  new Error(
+                    '連線逾時。若剛才是在送出訂單，請先使用「查詢訂單」確認是否已成功，避免重複送出。'
+                  )
+                );
+              },
+              timeoutMs
+            );
+
+          gasPending.set(
+            requestId,
+            {
+              action,
+              resolve,
+              reject,
+              frame,
+              form,
+              timer
+            }
+          );
+
+          document.body.appendChild(
+            frame
+          );
+
+          document.body.appendChild(
+            form
+          );
+
+          form.submit();
+        }
+      );
+    }
+
+    window.addEventListener(
+      'message',
+      event => {
+        const message =
+          event.data || {};
+
+        if (
+          !isTrustedGasOrigin(
+            event.origin
+          )
+        ) {
+          return;
+        }
+
+        if (
+          message.source !==
+            'milk-gas-bridge' ||
+          message.type !==
+            'response' ||
+          !message.requestId
+        ) {
+          return;
+        }
+
+        const pending =
+          gasPending.get(
+            message.requestId
+          );
+
+        if (!pending) return;
+
+        if (
+          message.action !==
+          pending.action
+        ) {
+          return;
+        }
+
+        const resolve =
+          pending.resolve;
+
+        const reject =
+          pending.reject;
+
+        cleanupGasRequest(
+          message.requestId
+        );
+
+        if (message.success) {
+          resolve(message.data);
+        } else {
+          reject(
+            new Error(
+              message.error ||
+              '操作失敗。'
+            )
+          );
+        }
+      }
     );
 
-    if (!pending.has(msg.requestId)) {
-      return;
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        bindTabs();
+        bindForm();
+
+        setTimeout(
+          () => {
+            callGas(
+              'bootstrap',
+              {},
+              20000
+            )
+              .then(initializeApp)
+              .catch(showFatalError);
+          },
+          300
+        );
+      }
+    );
+
+    function initializeApp(data) {
+      appData = data;
+
+      document.getElementById(
+        'loading'
+      ).hidden = true;
+
+      document.getElementById(
+        'app'
+      ).hidden = false;
+
+      document.getElementById(
+        'branchName'
+      ).textContent =
+        data.branchName;
+
+      document.getElementById(
+        'periodText'
+      ).textContent =
+        `${
+          data.period.displayText ||
+          data.period.targetMonthText
+        }｜整月 ${
+          data.period.bottleCount
+        } 瓶｜每瓶 NT$ ${
+          data.period.unitPrice
+        }`;
+
+      document.getElementById(
+        'queryNotice'
+      ).textContent =
+        data.notices.query;
+
+      document.getElementById(
+        'bagNotice'
+      ).textContent =
+        data.notices.bag;
+
+      document.getElementById(
+        'orderNotice'
+      ).textContent =
+        data.notices.order;
+
+      document.getElementById(
+        'summaryMonth'
+      ).textContent =
+        data.period.displayText ||
+        data.period.targetMonthText;
+
+      document.getElementById(
+        'fullMonthText'
+      ).textContent =
+        `${
+          data.period.displayText ||
+          data.period.targetMonthText
+        }，應繳 ${
+          formatMoney(
+            data.period.amount
+          )
+        }`;
+
+      renderStatus(data);
+      renderClasses(
+        data.classes
+      );
+      renderCalendar();
+      renderProducts(
+        data.products
+      );
+      updateOrderSummary();
+
+      setOrderFormEnabled(
+        data.status.canOrder
+      );
     }
 
-    const expected = pending.get(msg.requestId);
-    pending.delete(msg.requestId);
+    function renderStatus(data) {
+      const pill =
+        document.getElementById(
+          'statusPill'
+        );
 
-    if (msg.action !== expected) {
-      return;
+      pill.textContent =
+        data.status.label;
+
+      pill.className =
+        `pill ${
+          data.status.canOrder
+            ? 'open'
+            : data.status.code ===
+              'NOT_OPEN'
+              ? 'waiting'
+              : 'closed'
+        }`;
+
+      document.getElementById(
+        'deadlinePill'
+      ).textContent =
+        `表單開放時間：${
+          data.period.openAt
+        }～${
+          data.period.closeAt
+        }`;
+
+      document.getElementById(
+        'bottlePill'
+      ).textContent =
+        `整月 ${
+          data.period.bottleCount
+        } 瓶`;
+
+      const box =
+        document.getElementById(
+          'statusNotice'
+        );
+
+      if (
+        data.status.canOrder
+      ) {
+        box.innerHTML = `
+          <div class="notice info">
+            目前開放
+            ${escapeHtml(
+              data.period.displayText
+            )}
+            訂購。
+          </div>
+        `;
+
+        return;
+      }
+
+      const messages = {
+        NOT_OPEN:
+          data.notices.notOpen,
+
+        CLOSED:
+          data.notices.closed,
+
+        MAINTENANCE:
+          data.notices.maintenance,
+
+        MONTH_DISABLED:
+          `${
+            data.period.displayText ||
+            data.period.targetMonthText
+          }不開放乳品訂購。`,
+
+        DISABLED:
+          '乳品訂購系統目前暫停服務。'
+      };
+
+      box.innerHTML = `
+        <div class="notice error">
+          ${escapeHtml(
+            messages[
+              data.status.code
+            ] ||
+            '目前無法訂購。'
+          )}
+          <br>
+          仍可使用「查詢訂購」查看已送出的內容。
+        </div>
+      `;
     }
 
-    if (msg.action === 'bootstrap') handleBootstrap(msg);
-    if (msg.action === 'query') handleQuery(msg);
-    if (msg.action === 'submit-test') handleSubmit(msg);
-  });
-
-  function handleBootstrap(msg) {
-    if (bootstrapTimer) {
-      clearTimeout(bootstrapTimer);
-      bootstrapTimer = null;
+    function setOrderFormEnabled(
+      enabled
+    ) {
+      document
+        .getElementById(
+          'orderForm'
+        )
+        .querySelectorAll(
+          'input, select, textarea, button'
+        )
+        .forEach(
+          element => {
+            element.disabled =
+              !enabled;
+          }
+        );
     }
 
-    if (!msg.success) {
-      systemStatus.className = 'notice error';
-      systemStatus.textContent = msg.error || '系統設定讀取失敗。';
-      retryBootstrapBtn.hidden = false;
-      return;
+    function renderClasses(
+      classes
+    ) {
+      const select =
+        document.getElementById(
+          'className'
+        );
+
+      select.innerHTML =
+        '<option value="">請選擇班級</option>' +
+        classes
+          .map(
+            name => `
+              <option
+                value="${escapeAttr(
+                  name
+                )}"
+              >
+                ${escapeHtml(
+                  name
+                )}
+              </option>
+            `
+          )
+          .join('');
     }
 
-    bootstrap = msg.data || {};
-    const status = bootstrap.status || {};
-    const p = bootstrap.period || {};
+    function renderCalendar() {
+      const [
+        year,
+        month
+      ] =
+        appData
+          .period
+          .targetMonth
+          .split('-')
+          .map(Number);
 
-    systemStatus.className = status.canOrder ? 'notice ok' : 'notice warn';
-    systemStatus.textContent = `${status.label || '系統資料已讀取'}｜${p.targetMonthText || ''}`;
+      const firstDay =
+        new Date(
+          year,
+          month - 1,
+          1
+        );
 
-    const classSelect = document.getElementById('className');
-    classSelect.innerHTML = '<option value="">請選擇班級</option>' +
-      (bootstrap.classes || []).map(v => `<option value="${escAttr(v)}">${esc(v)}</option>`).join('');
+      const lastDay =
+        new Date(
+          year,
+          month,
+          0
+        ).getDate();
 
-    const productSelect = document.getElementById('productCode');
-    productSelect.innerHTML = '<option value="">請選擇品項</option>' +
-      (bootstrap.products || []).map(item =>
-        `<option value="${escAttr(item.code)}">${esc(item.name)}</option>`
-      ).join('');
+      const blockedDates =
+        new Set(
+          appData.blockedDates
+        );
 
-    document.getElementById('monthInfo').textContent =
-      `${p.targetMonthText || ''}｜${p.displayText || ''}｜整月 ${p.bottleCount || 0} 瓶｜每瓶 NT$${p.unitPrice || 0}｜合計 NT$${p.amount || 0}`;
+      const weekDays = [
+        '一',
+        '二',
+        '三',
+        '四',
+        '五',
+        '六',
+        '日'
+      ];
 
-    if (status.canOrder) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = '確認並送出測試訂單';
-    } else {
-      submitBtn.disabled = true;
-      submitBtn.textContent = '目前尚未開放，無法測試送單';
-      submitResult.innerHTML = `
-        <div class="notice warn">
-          系統資料已成功讀到，但目前正式訂購狀態不是「開放中」。<br>
-          因後端仍沿用正式送單規則，所以現在不能真正寫入測試訂單。
-        </div>`;
+      document.getElementById(
+        'calendarTitle'
+      ).textContent =
+        `${year} 年 ${month} 月配送日期`;
+
+      const cells =
+        weekDays.map(
+          day => `
+            <div class="weekday">
+              ${day}
+            </div>
+          `
+        );
+
+      const mondayOffset =
+        (
+          firstDay.getDay() +
+          6
+        ) % 7;
+
+      for (
+        let index = 0;
+        index < mondayOffset;
+        index += 1
+      ) {
+        cells.push(`
+          <button
+            class="calendar-day blank"
+            type="button"
+            disabled
+          ></button>
+        `);
+      }
+
+      for (
+        let day = 1;
+        day <= lastDay;
+        day += 1
+      ) {
+        const dateKey =
+          `${year}-${
+            String(month)
+              .padStart(
+                2,
+                '0'
+              )
+          }-${
+            String(day)
+              .padStart(
+                2,
+                '0'
+              )
+          }`;
+
+        const date =
+          new Date(
+            year,
+            month - 1,
+            day
+          );
+
+        const weekDay =
+          date.getDay();
+
+        const isWeekend =
+          weekDay === 0 ||
+          weekDay === 6;
+
+        const isBlocked =
+          blockedDates.has(
+            dateKey
+          );
+
+        const disabled =
+          isWeekend ||
+          isBlocked;
+
+        const title =
+          isWeekend
+            ? '週末不配送'
+            : isBlocked
+              ? '不配送日期'
+              : '';
+
+        cells.push(`
+          <button
+            type="button"
+            class="calendar-day${
+              disabled
+                ? ' disabled'
+                : ''
+            }"
+            data-date="${dateKey}"
+            ${
+              disabled
+                ? 'disabled'
+                : ''
+            }
+            title="${escapeAttr(
+              title
+            )}"
+          >
+            ${day}
+          </button>
+        `);
+      }
+
+      document.getElementById(
+        'calendarGrid'
+      ).innerHTML =
+        cells.join('');
+
+      document
+        .getElementById(
+          'calendarGrid'
+        )
+        .querySelectorAll(
+          '[data-date]'
+        )
+        .forEach(
+          button => {
+            button.addEventListener(
+              'click',
+              () => {
+                toggleDate(
+                  button.dataset.date,
+                  button
+                );
+              }
+            );
+          }
+        );
     }
-  }
 
-  submitBtn.addEventListener('click', () => {
-    if (!bootstrap) return;
+    function toggleDate(
+      dateKey,
+      button
+    ) {
+      if (
+        selectedDates.has(
+          dateKey
+        )
+      ) {
+        selectedDates.delete(
+          dateKey
+        );
+      } else {
+        selectedDates.add(
+          dateKey
+        );
+      }
 
-    const className = document.getElementById('className').value;
-    const phoneLast3 = document.getElementById('phoneLast3').value.trim();
-    const productCode = document.getElementById('productCode').value;
+      button.classList.toggle(
+        'selected',
+        selectedDates.has(
+          dateKey
+        )
+      );
 
-    if (!className) return showSubmitError('請選擇班級。');
-    if (!/^\d{3}$/.test(phoneLast3)) return showSubmitError('請輸入 3 位手機末三碼。');
-    if (!productCode) return showSubmitError('請選擇訂購品項。');
-
-    const product = (bootstrap.products || []).find(p => p.code === productCode);
-    const payload = {
-      studentName: '測試學生',
-      englishName: document.getElementById('englishName').value,
-      className,
-      phoneLast3,
-      needBag: document.getElementById('needBag').checked,
-      productCode,
-      rotationMode: product && product.type === '輪送品項' ? '全部口味輪送' : '',
-      selectedRotationCodes: [],
-      orderType: '整月訂購',
-      selectedDates: [],
-      note: document.getElementById('note').value,
-      requestToken: createRequestId()
-    };
-
-    if (!confirm(`確定送出測試訂單？\n\n測試學生／${className}\n${product ? product.name : productCode}\n${bootstrap.period?.displayText || ''}`)) return;
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = '送出並確認資料中……';
-    submitResult.innerHTML = '';
-    postToGas('submit-test', payload);
-  });
-
-  function handleSubmit(msg) {
-    const canOrder = Boolean(bootstrap && bootstrap.status && bootstrap.status.canOrder);
-    submitBtn.disabled = !canOrder;
-    submitBtn.textContent = canOrder ? '確認並送出測試訂單' : '目前尚未開放，無法測試送單';
-
-    if (!msg.success) {
-      showSubmitError(msg.error || '送單失敗。');
-      return;
+      updateOrderSummary();
     }
 
-    const result = msg.data || {};
-    const order = result.order || {};
-    submitResult.innerHTML = `
-      <div class="notice ok">
-        <strong>測試訂單已成功寫入，而且後端再次確認資料存在。</strong><br>
-        訂單編號：${esc(order.orderNumber || '')}<br>
-        學生：${esc(order.studentName || '')}<br>
-        班級：${esc(order.className || '')}<br>
-        品項：${esc(order.productName || '')}<br>
-        瓶數：${esc(String(order.deliveryCount || ''))}<br>
-        應繳金額：NT$${esc(String(order.amount || 0))}
-      </div>`;
-  }
+    function bindForm() {
+      document
+        .getElementById(
+          'phoneLast3'
+        )
+        .addEventListener(
+          'input',
+          numericOnly
+        );
 
-  function showSubmitError(text) {
-    submitResult.innerHTML = `<div class="notice error">${esc(text)}</div>`;
-  }
+      document
+        .getElementById(
+          'queryPhoneLast3'
+        )
+        .addEventListener(
+          'input',
+          numericOnly
+        );
 
-  queryBtn.addEventListener('click', () => {
-    const studentName = document.getElementById('queryName').value.trim();
-    const phoneLast3 = document.getElementById('queryLast3').value.trim();
+      document
+        .querySelectorAll(
+          'input[name="orderType"]'
+        )
+        .forEach(
+          input => {
+            input.addEventListener(
+              'change',
+              changeOrderType
+            );
+          }
+        );
 
-    if (!studentName || !/^\d{3}$/.test(phoneLast3)) {
-      queryResult.innerHTML = '<div class="notice error">請輸入學生中文全名與 3 位手機末三碼。</div>';
-      return;
+      document
+        .getElementById(
+          'orderForm'
+        )
+        .addEventListener(
+          'submit',
+          submitOrder
+        );
+
+      document
+        .getElementById(
+          'queryBtn'
+        )
+        .addEventListener(
+          'click',
+          queryOrders
+        );
     }
 
-    queryBtn.disabled = true;
-    queryBtn.textContent = '查詢中……';
-    queryResult.innerHTML = '';
-    postToGas('query', { studentName, phoneLast3 });
-  });
+    function changeOrderType() {
+      const orderType =
+        getOrderType();
 
-  function handleQuery(msg) {
-    queryBtn.disabled = false;
-    queryBtn.textContent = '查詢訂購內容';
+      document.getElementById(
+        'calendarSection'
+      ).hidden =
+        orderType !==
+        '自選配送日期';
 
-    if (!msg.success) {
-      queryResult.innerHTML = `<div class="notice error">${esc(msg.error || '查詢失敗。')}</div>`;
-      return;
+      document.getElementById(
+        'fullMonthChoice'
+      ).classList.toggle(
+        'active',
+        orderType ===
+          '整月訂購'
+      );
+
+      document.getElementById(
+        'customDateChoice'
+      ).classList.toggle(
+        'active',
+        orderType ===
+          '自選配送日期'
+      );
+
+      updateOrderSummary();
     }
 
-    const orders = msg.data || [];
-    if (!orders.length) {
-      queryResult.innerHTML = '<div class="result">查無符合的訂購資料。</div>';
-      return;
+    function getOrderType() {
+      return (
+        document.querySelector(
+          'input[name="orderType"]:checked'
+        )?.value ||
+        '整月訂購'
+      );
     }
 
-    queryResult.innerHTML = orders.map(o => `
-      <div class="result">
-        <strong>${esc(o.targetMonth || '')}｜${esc(o.productName || '')}</strong><br>
-        學生：${esc(o.studentName || '')}<br>
-        班級：${esc(o.className || '')}<br>
-        配送：${esc(o.displayText || '')}<br>
-        瓶數：${esc(String(o.deliveryCount || ''))}<br>
-        應繳金額：NT$${esc(String(o.amount || 0))}<br>
-        訂單編號：${esc(o.orderNumber || '')}
-      </div>`).join('');
-  }
+    function getCustomRotationRule(
+      productCode
+    ) {
+      const product = appData.products.find(item => item.code === productCode) || {};
+      const min = Number(product.customRotationMin || 1);
+      const max = Number(product.customRotationMax || min);
+      const rangeText = min === max ? `${min} 種` : `${min}～${max} 種`;
+      return {
+        min,
+        max,
+        cardText: `可選全部口味，或自選 ${rangeText}`,
+        description: `自選時只能選擇 ${rangeText}口味`,
+        shortText: `限定 ${rangeText}`,
+        initialText: `尚未選擇，請選擇 ${rangeText}口味`
+      };
+    }
 
-  function esc(v) {
-    return String(v == null ? '' : v)
-      .replace(/&/g,'&amp;')
-      .replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;')
-      .replace(/'/g,'&#039;');
-  }
+    function renderProducts(
+      products
+    ) {
+      const groups =
+        new Map();
 
-  function escAttr(v) {
-    return esc(v);
-  }
+      products.forEach(
+        product => {
+          if (
+            !groups.has(
+              product.seriesName
+            )
+          ) {
+            groups.set(
+              product.seriesName,
+              []
+            );
+          }
 
-  loadBootstrap();
-</script>
+          groups
+            .get(
+              product.seriesName
+            )
+            .push(
+              product
+            );
+        }
+      );
+
+      document.getElementById(
+        'productSections'
+      ).innerHTML =
+        [
+          ...groups.entries()
+        ]
+          .map(
+            ([seriesName, items]) => `
+              <div class="product-section">
+                <h3 class="series-title">
+                  ${escapeHtml(
+                    seriesName
+                  )}
+                </h3>
+
+                <div class="product-grid">
+                  ${items
+                    .map(
+                      renderProductCard
+                    )
+                    .join('')}
+                </div>
+              </div>
+            `
+          )
+          .join('');
+
+      document
+        .getElementById(
+          'productSections'
+        )
+        .querySelectorAll(
+          '[data-product-code]'
+        )
+        .forEach(
+          button => {
+            button.addEventListener(
+              'click',
+              () => {
+                selectProduct(
+                  button
+                    .dataset
+                    .productCode
+                );
+              }
+            );
+          }
+        );
+    }
+
+    function renderProductCard(
+      product
+    ) {
+      const customRule =
+        product
+          .allowCustomRotation
+          ? getCustomRotationRule(
+              product.code
+            )
+          : null;
+
+      return `
+        <article
+          class="product-card"
+          id="product-${escapeAttr(
+            product.code
+          )}"
+        >
+          <span class="selected-badge">
+            已選擇
+          </span>
+
+          <button
+            class="product-button"
+            type="button"
+            data-product-code="${escapeAttr(
+              product.code
+            )}"
+          >
+            <div class="product-body">
+              <div class="product-name">
+                ${escapeHtml(
+                  product.name
+                )}
+              </div>
+
+              <div class="product-price">
+                每瓶 NT$
+                ${Number(
+                  product.price
+                )}
+              </div>
+
+              ${
+                product.description
+                  ? `
+                    <div class="product-desc">
+                      ${escapeHtml(
+                        product.description
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
+
+              ${
+                customRule
+                  ? `
+                    <div class="custom-hint">
+                      ${escapeHtml(
+                        customRule.cardText
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
+            </div>
+          </button>
+
+          <div
+            class="inline-rotation"
+            id="rotation-${escapeAttr(
+              product.code
+            )}"
+            hidden
+          ></div>
+        </article>
+      `;
+    }
+
+    function selectProduct(
+      productCode
+    ) {
+      selectedProduct =
+        appData.products.find(
+          item =>
+            item.code ===
+            productCode
+        ) || null;
+
+      document
+        .querySelectorAll(
+          '.product-card'
+        )
+        .forEach(
+          card => {
+            card.classList.remove(
+              'selected'
+            );
+          }
+        );
+
+      document
+        .querySelectorAll(
+          '.inline-rotation'
+        )
+        .forEach(
+          box => {
+            box.hidden = true;
+            box.innerHTML = '';
+          }
+        );
+
+      if (!selectedProduct) {
+        return;
+      }
+
+      const selectedCard =
+        document.getElementById(
+          `product-${
+            selectedProduct.code
+          }`
+        );
+
+      selectedCard
+        .classList
+        .add(
+          'selected'
+        );
+
+      renderInlineRotation(
+        selectedProduct
+      );
+
+      updateOrderSummary();
+
+      window.setTimeout(
+        () => {
+          selectedCard
+            .scrollIntoView({
+              behavior:
+                'smooth',
+
+              block:
+                'center'
+            });
+        },
+        60
+      );
+    }
+
+    function renderInlineRotation(
+      product
+    ) {
+      if (
+        product.type !==
+        '輪送品項'
+      ) {
+        return;
+      }
+
+      const box =
+        document.getElementById(
+          `rotation-${
+            product.code
+          }`
+        );
+
+      const options =
+        appData.rotations.filter(
+          item =>
+            item.rotationCode ===
+            product.code
+        );
+
+      box.hidden = false;
+
+      if (
+        !product
+          .allowCustomRotation
+      ) {
+        box.innerHTML = `
+          <div class="inline-rotation-title">
+            此品項將依序輪送
+          </div>
+
+          <div class="fixed-flavors">
+            ${options
+              .map(
+                item => `
+                  <span>
+                    ${escapeHtml(
+                      item.name
+                    )}
+                  </span>
+                `
+              )
+              .join('')}
+          </div>
+        `;
+
+        return;
+      }
+
+      const rule =
+        getCustomRotationRule(
+          product.code
+        );
+
+      box.innerHTML = `
+        <div class="inline-rotation-title">
+          請選擇輪送方式
+        </div>
+
+        <div class="inline-mode-list">
+          <label class="choice">
+            <input
+              type="radio"
+              name="rotationMode"
+              value="全部口味輪送"
+              checked
+            >
+
+            <span>
+              <strong>
+                全部口味輪送
+              </strong>
+              <br>
+
+              <small>
+                依所有口味輪流配送
+              </small>
+            </span>
+          </label>
+
+          <label class="choice">
+            <input
+              type="radio"
+              name="rotationMode"
+              value="自選口味輪送"
+            >
+
+            <span>
+              <strong>
+                自選口味輪送
+              </strong>
+              <br>
+
+              <small>
+                ${escapeHtml(
+                  rule.description
+                )}
+              </small>
+            </span>
+          </label>
+        </div>
+
+        <div
+          id="inlineFlavorOptions"
+          class="inline-flavor-options"
+          hidden
+        >
+          <div class="flavor-title">
+            <span>
+              選擇想輪送的口味
+            </span>
+
+            <small>
+              ${escapeHtml(
+                rule.shortText
+              )}
+            </small>
+          </div>
+
+          <div class="flavor-check-grid">
+            ${options
+              .filter(
+                item =>
+                  item.selectable
+              )
+              .map(
+                item => `
+                  <label class="flavor-check">
+                    <input
+                      type="checkbox"
+                      name="rotationItem"
+                      value="${escapeAttr(
+                        item.itemCode
+                      )}"
+                    >
+
+                    <span>
+                      ${escapeHtml(
+                        item.name
+                      )}
+                    </span>
+                  </label>
+                `
+              )
+              .join('')}
+          </div>
+
+          <div
+            id="flavorCount"
+            class="flavor-count"
+          >
+            ${escapeHtml(
+              rule.initialText
+            )}
+          </div>
+        </div>
+      `;
+
+      box
+        .querySelectorAll(
+          'input[name="rotationMode"]'
+        )
+        .forEach(
+          input => {
+            input.addEventListener(
+              'change',
+              event => {
+                const flavorOptions =
+                  document.getElementById(
+                    'inlineFlavorOptions'
+                  );
+
+                flavorOptions.hidden =
+                  event.target.value !==
+                  '自選口味輪送';
+
+                if (
+                  flavorOptions.hidden
+                ) {
+                  flavorOptions
+                    .querySelectorAll(
+                      'input[name="rotationItem"]'
+                    )
+                    .forEach(
+                      checkbox => {
+                        checkbox.checked =
+                          false;
+                      }
+                    );
+
+                  updateFlavorCount();
+                }
+              }
+            );
+          }
+        );
+
+      box
+        .querySelectorAll(
+          'input[name="rotationItem"]'
+        )
+        .forEach(
+          input => {
+            input.addEventListener(
+              'change',
+              updateFlavorCount
+            );
+          }
+        );
+    }
+
+    function updateFlavorCount(
+      event
+    ) {
+      if (!selectedProduct) {
+        return;
+      }
+
+      const rule =
+        getCustomRotationRule(
+          selectedProduct.code
+        );
+
+      let checkedItems = [
+        ...document
+          .querySelectorAll(
+            'input[name="rotationItem"]:checked'
+          )
+      ];
+
+      if (
+        event &&
+        event.target &&
+        checkedItems.length >
+          rule.max
+      ) {
+        event.target.checked =
+          false;
+
+        checkedItems = [
+          ...document
+            .querySelectorAll(
+              'input[name="rotationItem"]:checked'
+            )
+        ];
+
+        alert(`${selectedProduct.name}自選口味最多只能選擇 ${rule.max} 種；如需全部口味，請選擇「全部口味輪送」。`);
+      }
+
+      const count =
+        checkedItems.length;
+
+      const box =
+        document.getElementById(
+          'flavorCount'
+        );
+
+      if (!box) {
+        return;
+      }
+
+      document
+        .querySelectorAll(
+          'input[name="rotationItem"]'
+        )
+        .forEach(
+          checkbox => {
+            const shouldDisable =
+              count >=
+                rule.max &&
+              !checkbox.checked;
+
+            checkbox.disabled =
+              shouldDisable;
+
+            const label =
+              checkbox.closest(
+                '.flavor-check'
+              );
+
+            if (label) {
+              label.classList.toggle(
+                'disabled',
+                shouldDisable
+              );
+            }
+          }
+        );
+
+      if (
+        count >= rule.min &&
+        count <= rule.max
+      ) {
+        box.textContent =
+          `已選擇 ${count} 種口味`;
+
+        box.className =
+          'flavor-count complete';
+
+      } else {
+        box.textContent =
+          count === 0
+            ? rule.initialText
+            : `已選擇 ${count} 種，還需要選擇 ${
+                rule.min -
+                count
+              } 種`;
+
+        box.className =
+          'flavor-count';
+      }
+    }
+
+    function updateOrderSummary() {
+      if (!appData) {
+        return;
+      }
+
+      const orderType =
+        getOrderType();
+
+      const dayCount =
+        orderType ===
+          '整月訂購'
+          ? appData
+              .period
+              .bottleCount
+          : selectedDates.size;
+
+      const amount =
+        dayCount *
+        appData
+          .period
+          .unitPrice;
+
+      document.getElementById(
+        'summaryType'
+      ).textContent =
+        orderType;
+
+      document.getElementById(
+        'summaryDays'
+      ).textContent =
+        `${dayCount} 天`;
+
+      document.getElementById(
+        'summaryAmount'
+      ).textContent =
+        formatMoney(amount);
+
+      document.getElementById(
+        'summaryProduct'
+      ).textContent =
+        selectedProduct
+          ? selectedProduct.name
+          : '尚未選擇';
+
+      if (
+        orderType ===
+        '自選配送日期'
+      ) {
+        const sortedDates = [
+          ...selectedDates
+        ].sort();
+
+        const dateSummary =
+          document.getElementById(
+            'dateSummary'
+          );
+
+        dateSummary.textContent =
+          sortedDates.length
+            ? `已選 ${
+                sortedDates.length
+              } 天｜${
+                formatMoney(amount)
+              }｜${
+                sortedDates
+                  .map(
+                    formatDateShort
+                  )
+                  .join('、')
+              }`
+            : '尚未選擇配送日期';
+
+        dateSummary.className =
+          `date-summary${
+            sortedDates.length
+              ? ''
+              : ' error'
+          }`;
+      }
+    }
+
+    function submitOrder(event) {
+      event.preventDefault();
+
+      if (!validateForm()) {
+        return;
+      }
+
+      const selectedRotationCodes = [
+        ...document
+          .querySelectorAll(
+            'input[name="rotationItem"]:checked'
+          )
+      ].map(
+        input => input.value
+      );
+
+      const rotationMode =
+        document.querySelector(
+          'input[name="rotationMode"]:checked'
+        )?.value || '';
+
+      const orderType =
+        getOrderType();
+
+      const payload = {
+        studentName:
+          document.getElementById(
+            'studentName'
+          ).value,
+
+        englishName:
+          document.getElementById('englishName').value,
+
+        className:
+          document.getElementById(
+            'className'
+          ).value,
+
+        phoneLast3:
+          document.getElementById(
+            'phoneLast3'
+          ).value,
+
+        needBag:
+          document.querySelector(
+            'input[name="needBag"]:checked'
+          ).value ===
+          'true',
+
+        productCode:
+          selectedProduct.code,
+
+        rotationMode,
+
+        selectedRotationCodes,
+
+        orderType,
+
+        selectedDates: [
+          ...selectedDates
+        ].sort(),
+
+        note:
+          document.getElementById(
+            'note'
+          ).value,
+
+        requestToken:
+          `${Date.now()}-${Math.random().toString(36).slice(2)}`
+      };
+
+      const dayCount =
+        orderType ===
+          '整月訂購'
+          ? appData
+              .period
+              .bottleCount
+          : selectedDates.size;
+
+      const detail = [
+        `${payload.studentName}／${payload.className}`,
+        orderType,
+
+        orderType ===
+          '自選配送日期'
+          ? payload
+              .selectedDates
+              .map(
+                formatDateShort
+              )
+              .join('、')
+          : '',
+
+        selectedProduct.name,
+
+        `共 ${dayCount} 天`,
+
+        `應繳 ${
+          formatMoney(
+            dayCount *
+            appData
+              .period
+              .unitPrice
+          )
+        }`
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const confirmed =
+        window.confirm(
+          `訂單送出後無法修改，請再次確認：\n\n${detail}\n\n確定送出嗎？`
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      const button =
+        document.getElementById(
+          'submitBtn'
+        );
+
+      const errorBox = document.getElementById('submitError');
+      errorBox.hidden = true;
+      errorBox.textContent = '';
+
+      button.disabled = true;
+      button.textContent =
+        '送出中……';
+
+      callGas(
+        'submit',
+        payload,
+        45000
+      )
+        .then(
+          result => {
+            showSuccess(result);
+          }
+        )
+        .catch(
+          error => {
+            button.disabled =
+              false;
+
+            button.textContent =
+              '確認並送出訂購';
+
+            const errorBox =
+              document.getElementById(
+                'submitError'
+              );
+
+            errorBox.textContent =
+              error.message ||
+              '送出失敗，請稍後再試。';
+
+            errorBox.hidden = false;
+
+            errorBox.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }
+        );
+    }
+
+    function validateForm() {
+      const studentName =
+        document.getElementById(
+          'studentName'
+        ).value.trim();
+
+      const className =
+        document.getElementById(
+          'className'
+        ).value;
+
+      const phoneLast3 =
+        document.getElementById(
+          'phoneLast3'
+        ).value.trim();
+
+      if (!studentName) {
+        return alertAndFalse(
+          '請填寫學生中文全名。'
+        );
+      }
+
+      if (!className) {
+        return alertAndFalse(
+          '請選擇班級。'
+        );
+      }
+
+      if (
+        !/^\d{3}$/.test(
+          phoneLast3
+        )
+      ) {
+        return alertAndFalse(
+          '請輸入 3 位手機末三碼。'
+        );
+      }
+
+      if (
+        getOrderType() ===
+          '自選配送日期' &&
+        !selectedDates.size
+      ) {
+        return alertAndFalse(
+          '請至少選擇 1 個配送日期。'
+        );
+      }
+
+      if (!selectedProduct) {
+        return alertAndFalse(
+          '請選擇訂購品項。'
+        );
+      }
+
+      if (
+        selectedProduct.type ===
+          '輪送品項' &&
+        selectedProduct
+          .allowCustomRotation
+      ) {
+        const mode =
+          document.querySelector(
+            'input[name="rotationMode"]:checked'
+          )?.value;
+
+        if (
+          mode ===
+          '自選口味輪送'
+        ) {
+          const count =
+            document
+              .querySelectorAll(
+                'input[name="rotationItem"]:checked'
+              )
+              .length;
+
+          const rule =
+            getCustomRotationRule(
+              selectedProduct.code
+            );
+
+          if (
+            count < rule.min ||
+            count > rule.max
+          ) {
+            const rangeText = rule.min === rule.max ? `${rule.min} 種` : `${rule.min}～${rule.max} 種`;
+            return alertAndFalse(`${selectedProduct.name}自選口味只能選擇 ${rangeText}。`);
+          }
+        }
+      }
+
+      return true;
+    }
+
+    function showSuccess(result) {
+      const order =
+        result.order;
+
+      document.getElementById(
+        'orderForm'
+      ).hidden = true;
+
+      const section =
+        document.getElementById(
+          'successSection'
+        );
+
+      section.hidden = false;
+
+      const flavorRow =
+        order.rotationNames &&
+        order.rotationNames.length
+          ? receiptRow(
+              order.rotationMode ===
+                '自選口味輪送'
+                ? '選擇口味'
+                : '輪送內容',
+
+              order.rotationNames.join(
+                '、'
+              )
+            )
+          : '';
+
+      const dateRow =
+        order.orderType ===
+          '自選配送日期'
+          ? receiptRow(
+              '配送日期',
+              order.selectedDates
+                .map(
+                  formatDateShort
+                )
+                .join('、')
+            )
+          : '';
+
+      section.innerHTML = `
+        <div class="receipt receipt-simple">
+          <div class="success-mark">
+            ✓
+          </div>
+
+          <div class="eyebrow">
+            訂購完成
+          </div>
+
+          <h2 style="margin:5px 0">
+            ${escapeHtml(
+              order.displayText ||
+              order.targetMonth
+            )}
+          </h2>
+
+          <div id="paymentInfoSection" class="payment-alert" tabindex="-1">
+            <span class="payment-alert-title">⚠️ 繳費重要提醒</span>
+            ${escapeHtml(order.paymentNotice || '請務必截圖保存本頁訂購資訊。您可直接轉帳，或持此畫面至櫃檯繳費；本班不另提供紙本繳費單。')}
+          </div>
+
+          <div class="success-main">
+            ${receiptRow(
+              '學生／班級',
+              `${order.studentName}${order.englishName ? ' ' + order.englishName : ''}／${order.className}`
+            )}
+
+            ${receiptRow(
+              '訂購方式',
+              order.orderType
+            )}
+
+            ${dateRow}
+
+            ${receiptRow(
+              '配送天數',
+              `${order.deliveryCount} 天`
+            )}
+
+            ${receiptRow(
+              '訂購品項',
+              order.productName
+            )}
+
+            ${flavorRow}
+
+            ${receiptRow(
+              '收費袋',
+              order.needBag
+            )}
+
+            ${
+              order.note
+                ? receiptRow(
+                    '備註',
+                    order.note
+                  )
+                : ''
+            }
+          </div>
+
+          <div class="success-amount">
+            <span>
+              應繳金額
+            </span>
+
+            <strong>
+              ${formatMoney(
+                order.amount
+              )}
+            </strong>
+          </div>
+
+          <div class="order-number-box">
+            <span>
+              訂單編號
+            </span>
+
+            <strong>
+              ${escapeHtml(
+                order.orderNumber
+              )}
+            </strong>
+          </div>
+
+
+          <button
+            class="secondary-btn"
+            type="button"
+            onclick="returnToHome()"
+          >
+            返回首頁
+          </button>
+        </div>
+      `;
+
+      window.setTimeout(() => {
+        const paymentInfo = section.querySelector(
+          '#paymentInfoSection'
+        );
+
+        if (paymentInfo) {
+          paymentInfo.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          paymentInfo.focus({ preventScroll: true });
+        }
+      }, 150);
+    }
+
+    function returnToHome() {
+      const form =
+        document.getElementById(
+          'orderForm'
+        );
+
+      const successSection =
+        document.getElementById(
+          'successSection'
+        );
+
+      // 只重設前端畫面，不重新載入 Web App，
+      // 因此不會再次等待 getAppBootstrap()。
+      form.reset();
+      selectedProduct = null;
+      selectedDates.clear();
+
+      successSection.hidden = true;
+      successSection.innerHTML = '';
+      form.hidden = false;
+
+      const errorBox =
+        document.getElementById(
+          'submitError'
+        );
+      errorBox.hidden = true;
+      errorBox.textContent = '';
+
+      renderCalendar();
+      renderProducts(
+        appData.products
+      );
+      changeOrderType();
+      updateOrderSummary();
+      setOrderFormEnabled(
+        appData.status.canOrder
+      );
+
+      document
+        .querySelectorAll(
+          '.tab-btn'
+        )
+        .forEach(
+          button => {
+            button.classList.toggle(
+              'active',
+              button.dataset.tab ===
+                'order'
+            );
+          }
+        );
+
+      document
+        .querySelectorAll(
+          '.panel'
+        )
+        .forEach(
+          panel => {
+            panel.classList.toggle(
+              'active',
+              panel.id ===
+                'orderPanel'
+            );
+          }
+        );
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    function queryOrders() {
+      const name =
+        document.getElementById(
+          'queryStudentName'
+        ).value.trim();
+
+      const last3 =
+        document.getElementById(
+          'queryPhoneLast3'
+        ).value.trim();
+
+      const results =
+        document.getElementById(
+          'queryResults'
+        );
+
+      if (
+        !name ||
+        !/^\d{3}$/.test(
+          last3
+        )
+      ) {
+        results.innerHTML = `
+          <div
+            class="notice error"
+            style="margin-top:12px"
+          >
+            請輸入學生中文全名與 3 位手機末三碼。
+          </div>
+        `;
+
+        return;
+      }
+
+      const button =
+        document.getElementById(
+          'queryBtn'
+        );
+
+      button.disabled = true;
+      button.textContent =
+        '查詢中……';
+
+      results.innerHTML = '';
+
+      callGas(
+        'query',
+        {
+          studentName: name,
+          phoneLast3: last3
+        },
+        30000
+      )
+        .then(
+          orders => {
+            button.disabled =
+              false;
+
+            button.textContent =
+              '查詢訂購內容';
+
+            renderQueryResults(
+              orders
+            );
+          }
+        )
+        .catch(
+          error => {
+            button.disabled =
+              false;
+
+            button.textContent =
+              '查詢訂購內容';
+
+            results.innerHTML = `
+              <div
+                class="notice error"
+                style="margin-top:12px"
+              >
+                ${escapeHtml(
+                  error.message ||
+                  '查詢失敗。'
+                )}
+              </div>
+            `;
+          }
+        );
+    }
+
+    function renderQueryResults(
+      orders
+    ) {
+      const results =
+        document.getElementById(
+          'queryResults'
+        );
+
+      if (!orders.length) {
+        results.innerHTML = `
+          <div
+            class="notice info"
+            style="margin-top:12px"
+          >
+            查無符合的訂購資料，請確認姓名與手機末三碼是否和送出時相同。
+          </div>
+        `;
+
+        return;
+      }
+
+      results.innerHTML =
+        orders
+          .map(
+            order => `
+              <article class="result-card">
+                <div class="eyebrow">
+                  ${escapeHtml(
+                    order.displayText ||
+                    order.targetMonth
+                  )}
+                </div>
+
+                <h3 style="margin:4px 0 8px">
+                  ${escapeHtml(
+                    order.productName
+                  )}
+                </h3>
+
+                ${receiptRow(
+                  '學生／班級',
+                  `${order.studentName}／${order.className}`
+                )}
+
+                ${receiptRow(
+                  '訂購方式',
+                  order.orderType
+                )}
+
+                ${
+                  order.selectedDates
+                    ? receiptRow(
+                        '配送日期',
+                        order
+                          .selectedDates
+                          .split('、')
+                          .map(
+                            formatDateShort
+                          )
+                          .join('、')
+                      )
+                    : ''
+                }
+
+                ${receiptRow(
+                  '配送天數',
+                  `${order.deliveryCount} 天`
+                )}
+
+                ${
+                  order.rotationNames
+                    ? receiptRow(
+                        order.rotationMode ===
+                          '自選口味輪送'
+                          ? '選擇口味'
+                          : '輪送內容',
+
+                        order.rotationNames
+                      )
+                    : ''
+                }
+
+                ${receiptRow(
+                  '收費袋',
+                  order.needBag
+                )}
+
+                ${receiptRow(
+                  '應繳金額',
+                  formatMoney(
+                    order.amount
+                  )
+                )}
+
+                ${
+                  order.note
+                    ? receiptRow(
+                        '備註',
+                        order.note
+                      )
+                    : ''
+                }
+
+                <div
+                  class="hint"
+                  style="margin-top:8px"
+                >
+                  訂單編號：
+                  ${escapeHtml(
+                    order.orderNumber
+                  )}
+                  <br>
+
+                  送出時間：
+                  ${escapeHtml(
+                    order.submittedAt
+                  )}
+                </div>
+              </article>
+            `
+          )
+          .join('');
+    }
+
+    function bindTabs() {
+      document
+        .querySelectorAll(
+          '.tab-btn'
+        )
+        .forEach(
+          button => {
+            button.addEventListener(
+              'click',
+              () => {
+                document
+                  .querySelectorAll(
+                    '.tab-btn'
+                  )
+                  .forEach(
+                    item => {
+                      item.classList.remove(
+                        'active'
+                      );
+                    }
+                  );
+
+                document
+                  .querySelectorAll(
+                    '.panel'
+                  )
+                  .forEach(
+                    panel => {
+                      panel.classList.remove(
+                        'active'
+                      );
+                    }
+                  );
+
+                button.classList.add(
+                  'active'
+                );
+
+                document
+                  .getElementById(
+                    `${
+                      button
+                        .dataset
+                        .tab
+                    }Panel`
+                  )
+                  .classList.add(
+                    'active'
+                  );
+              }
+            );
+          }
+        );
+    }
+
+    function receiptRow(
+      label,
+      value
+    ) {
+      return `
+        <div class="receipt-row">
+          <span>
+            ${escapeHtml(label)}
+          </span>
+
+          <strong>
+            ${escapeHtml(value)}
+          </strong>
+        </div>
+      `;
+    }
+
+    function showFatalError(
+      error
+    ) {
+      document.getElementById(
+        'loading'
+      ).innerHTML = `
+        <div class="notice error">
+          載入失敗：
+          ${escapeHtml(
+            error.message ||
+            '請稍後再試。'
+          )}
+        </div>
+      `;
+    }
+
+    function numericOnly(event) {
+      event.target.value =
+        event.target.value
+          .replace(
+            /\D/g,
+            ''
+          )
+          .slice(
+            0,
+            3
+          );
+    }
+
+    function alertAndFalse(
+      message
+    ) {
+      alert(message);
+      return false;
+    }
+
+    function formatMoney(
+      value
+    ) {
+      return (
+        `NT$ ${
+          Number(
+            value || 0
+          ).toLocaleString(
+            'zh-TW'
+          )
+        }`
+      );
+    }
+
+    function formatDateShort(
+      dateKey
+    ) {
+      const match =
+        String(
+          dateKey || ''
+        ).match(
+          /^\d{4}-(\d{2})-(\d{2})$/
+        );
+
+      return match
+        ? `${Number(match[1])}/${Number(match[2])}`
+        : String(
+            dateKey || ''
+          );
+    }
+
+    function escapeHtml(
+      value
+    ) {
+      return String(
+        value ?? ''
+      )
+        .replace(
+          /&/g,
+          '&amp;'
+        )
+        .replace(
+          /</g,
+          '&lt;'
+        )
+        .replace(
+          />/g,
+          '&gt;'
+        )
+        .replace(
+          /"/g,
+          '&quot;'
+        )
+        .replace(
+          /'/g,
+          '&#039;'
+        );
+    }
+
+    function escapeAttr(
+      value
+    ) {
+      return escapeHtml(
+        value
+      );
+    }
+  </script>
 </body>
 </html>
